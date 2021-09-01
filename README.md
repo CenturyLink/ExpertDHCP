@@ -6,7 +6,7 @@ APIlayer and a web UI to make controlling DHCP easier for systems administrators
 and network engineers.
 
 **Deployment Diagram**
-![](docs/https://github.com/CenturyLink/VTZ-MasterDHCP-Future/blob/feature-docs/docs/Master_DHCP_Multi_Location_Deployment_Scenario.png)
+![Deployment Diagram](docs/https://github.com/CenturyLink/VTZ-MasterDHCP-Future/blob/feature-docs/docs/Master_DHCP_Multi_Location_Deployment_Scenario.png)
 
 - **Features**
   - Control geographically redundant KEA DHCP servers from a single WEB UI 
