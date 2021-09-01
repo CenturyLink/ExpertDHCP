@@ -12,4 +12,14 @@ and network engineers.
   <li> Configure subnets, reservations, classes and other aspects of KEA DHCP
       using a web UI </li>
   <li> Capture DHCP packets for troubleshooting <li>
+</ul>
  
+**Platforms**
+<ul>
+  <li> Linux </li>
+</ul>
+
+**Getting Master DHCP**
+<ul>
+  <li> [Documentation](docs/documentation.md) </li>
+</ul>
