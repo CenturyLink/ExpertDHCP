@@ -5,12 +5,12 @@ https://gitlab.isc.org/isc-projects/kea) as the base DHCP server and adds a REST
 APIlayer and a web UI to make controlling DHCP easier for systems administrators
 and network engineers.
 
+**Architecture Diagram**
+![Architecture Diagram](docs/Master_DHCP_Architecture_Diagram.png)
+
 **Deployment Example**
 ![Deployment Diagram](docs/Master_DHCP_Multi_Location_Deployment_Scenario.png)
 
-**Architecture Diagram**
-
-![Architecture Diagram](docs/Master_DHCP_Architecture_Diagram.png)
 - **Features**
   - Control geographically redundant KEA DHCP servers from a single WEB UI 
   - Configure subnets, reservations, classes and other aspects of KEA DHCP
