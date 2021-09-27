@@ -1,11 +1,11 @@
 import csv
 import secrets
 import time
-from fast_dhcp.config import API_KEYS_CSV
+from restservice.config import API_KEYS_CSV
 from io import StringIO
 from os.path import exists
 from datetime import date, datetime
-from expertdhcp import LOGGER
+from restservice import LOGGER
 
 MIN_LINE_LENGTH = 37
 
@@ -14,9 +14,9 @@ def verify_api_key(apikey):
 
     api_key_csv = open(API_KEYS_CSV, 'r')
     if api_key_csv == None: 
-        print("ERROR: api_key_csv is empty or a file read issue has been 
+        print("ERROR: api_key_csv is empty or a file read issue has been \ 
               encountered")
-        LOGGER.error("ERROR: api_key_csv is empty or a file read issue has 
+        LOGGER.error("ERROR: api_key_csv is empty or a file read issue has \
             been encountered")
         return False
     for line in api_key_csv:

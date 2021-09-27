@@ -31,7 +31,7 @@ def create_logger(logger_name, file_name):
     import logging
     import os
     from logging.handlers import RotatingFileHandler
-    from fast_dhcp.config import LOG_LEVEL, LOG_FILE_MAX_SIZE_MB, LOG_FILE_BACKUP_COUNT
+    from restservice.config import LOG_LEVEL, LOG_FILE_MAX_SIZE_MB, LOG_FILE_BACKUP_COUNT
     print("Defining logger [", logger_name, "] with Level [", LOG_LEVEL, "] and logger name [", LOG_FILE_NAME, "]")
 
     log_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + '/logs/'
@@ -55,7 +55,7 @@ def create_logger(logger_name, file_name):
     return logger
 
 
-LOGGER = create_logger('FAST-DHCP-LOGGER', LOG_FILE_NAME)
+LOGGER = create_logger('EXPERT-DHCP-LOGGER', LOG_FILE_NAME)
 
 
 def create_app():
@@ -73,7 +73,7 @@ def create_app():
         SECRET_KEY='dev'
     )
     LOGGER.info("Registering Blueprint to app")
-    from fast_dhcp.endpoints import BP
+    from restservice.endpoints import BP
     app.register_blueprint(BP)
 
     return app
