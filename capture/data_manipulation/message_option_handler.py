@@ -1,4 +1,4 @@
-class dhcpOptionHandlerFactory(object):
+class DhcpOptionHandlerFactory(object):
     def __init__(self, dhcp_message_type, maximum_dhcp_msg_size=None,
                  client_identifier=None,
                  server_identifier=None,
@@ -32,13 +32,13 @@ class dhcpOptionHandlerFactory(object):
                "host_name=%s, server_identifier=%s, vendor_class_identifier=%s, parameter_request_list=%s, " \
                "request_ip_address=%s, ip_address_lease_time=%s, routers=%s, dns_servers=%s, subnet_mask=%s, " \
                "t1=%s, t2=%s" \
-               % (
-               self.__dhcp_message_type, self.__maximum_dhcp_msg_size, self.__client_identifier, self.__host_name,
-               self.__server_identifier, self.__request_ip_address, self.__parameter_request_list,
-               self.__vendor_class_identifier, self.__ip_address_lease_time, self.__routers, self.__dns_servers,
-               self.__subnet_mask, self.__t1, self.__t2)
+               % (self.__dhcp_message_type, self.__maximum_dhcp_msg_size, self.__client_identifier, self.__host_name,
+                  self.__server_identifier, self.__request_ip_address, self.__parameter_request_list,
+                  self.__vendor_class_identifier, self.__ip_address_lease_time, self.__routers, self.__dns_servers,
+                  self.__subnet_mask, self.__t1, self.__t2)
 
-class dhcpNackBuilder(object):
+
+class DhcpNackBuilder(object):
     """
     OPTION:  53 (  1) DHCP message type         6 (DHCPNAK)
     OPTION:  54 (  4) Server identifier         172.28.12.132
@@ -51,7 +51,7 @@ class dhcpNackBuilder(object):
         self.reqired_fields = []
 
     def __call__(self, params):
-        self.__instance = dhcpOptionHandlerFactory(
+        self.__instance = DhcpOptionHandlerFactory(
             dhcp_message_type=params.get('DHCP message type', None),
             client_identifier=params.get('Server identifier', None),
             server_identifier=params.get('Client-identifier', None)
@@ -59,16 +59,23 @@ class dhcpNackBuilder(object):
         return self.__instance
 
     def __repr__(self):
-        return "DHCP Nack Object: {dhcp_message_type=%s, client_identifier=%s, server_identifier=%s}" % (self.__instance._dhcpOptionHandlerFactory__dhcp_message_type,self.__instance._dhcpOptionHandlerFactory__client_identifier,self.__instance._dhcpOptionHandlerFactory__server_identifier)
+        return f"DHCP NACK Object: " \
+               f"{{dhcp_message_type={self.__instance._dhcpOptionHandlerFactory__dhcp_message_type}, " \
+               f"client_identifier={self.__instance._dhcpOptionHandlerFactory__client_identifier}, " \
+               f"server_identifier={self.__instance._dhcpOptionHandlerFactory__server_identifier}}}"
+
     def __str__(self):
-        return "DHCPNACK: DHCPMsgType:{} ClientIdentifier:{} ServerIdentifier:{}".format(self.__instance._dhcpOptionHandlerFactory__dhcp_message_type,self.__instance._dhcpOptionHandlerFactory__client_identifier,self.__instance._dhcpOptionHandlerFactory__server_identifier)
+        return f"DHCPNACK: " \
+               f"DHCPMsgType:{self.__instance._dhcpOptionHandlerFactory__dhcp_message_type} " \
+               f"ClientIdentifier:{self.__instance._dhcpOptionHandlerFactory__client_identifier} " \
+               f"ServerIdentifier:{self.__instance._dhcpOptionHandlerFactory__server_identifier}"
 
     @property
     def required_fields(self):
         return ['DHCP message type', 'Server identifier', 'Client-identifier']
 
 
-class dhcpDiscoverBuilder(object):
+class DhcpDiscoverBuilder(object):
     """
     OPTION:  53 (  1) DHCP message type         1 (DHCPDISCOVER)
     OPTION:  61 (  7) Client-identifier         01:f0:92:1c:19:ed:9e
@@ -95,7 +102,7 @@ class dhcpDiscoverBuilder(object):
         self.__instance = None
 
     def __call__(self, params):
-        self.__instance = dhcpOptionHandlerFactory(
+        self.__instance = DhcpOptionHandlerFactory(
             dhcp_message_type=params.get('DHCP message type', None),
             client_identifier=params.get('Client-identifier', None),
             host_name=params.get('Host name', None),
@@ -108,25 +115,26 @@ class dhcpDiscoverBuilder(object):
     def required_fields(self):
         return ['DHCP message type', 'Client-identifier', 'Host name', 'Vendor class identifier',
                 'Parameter Request List']
+
     def __repr__(self):
         return "DHCP Discover Object: dhcp_message_type=%s, client_identifier=%s, host_name=%s, " \
-               "vendor_class_identifier=%s , parameter_request_list=%s"\
+               "vendor_class_identifier=%s , parameter_request_list=%s" \
                % (self.__instance._dhcpOptionHandlerFactory__dhcp_message_type,
                   self.__instance._dhcpOptionHandlerFactory__client_identifier,
                   self.__instance._dhcpOptionHandlerFactory__host_name,
                   self.__instance._dhcpOptionHandlerFactory__vendor_class_identifier,
                   self.__instance._dhcpOptionHandlerFactory__parameter_request_list)
+
     def __str__(self):
         return "DHCPDISCOVER: DHCPMsgType:{} ClientIdentifier:{} HostName:{} VendorClassIdentifier:{}" \
                "ParameterRequestList:{}".format(self.__instance._dhcpOptionHandlerFactory__dhcp_message_type,
-                  self.__instance._dhcpOptionHandlerFactory__client_identifier,
-                  self.__instance._dhcpOptionHandlerFactory__host_name,
-                  self.__instance._dhcpOptionHandlerFactory__vendor_class_identifier,
-                  self.__instance._dhcpOptionHandlerFactory__parameter_request_list)
+                                                self.__instance._dhcpOptionHandlerFactory__client_identifier,
+                                                self.__instance._dhcpOptionHandlerFactory__host_name,
+                                                self.__instance._dhcpOptionHandlerFactory__vendor_class_identifier,
+                                                self.__instance._dhcpOptionHandlerFactory__parameter_request_list)
 
 
-
-class dhcpRequestBuilder(object):
+class DhcpRequestBuilder(object):
     """
     OPTION:  53 (  1) DHCP message type         3 (DHCPREQUEST)
     OPTION:  50 (  4) Request IP address        10.240.129.148
@@ -156,7 +164,7 @@ class dhcpRequestBuilder(object):
         self.__instance = None
 
     def __call__(self, params):
-        self.__instance = dhcpOptionHandlerFactory(
+        self.__instance = DhcpOptionHandlerFactory(
             dhcp_message_type=params.get('DHCP message type', None),
             maximum_dhcp_msg_size=params.get('Maximum DHCP message size', None),
             client_identifier=params.get('Client-identifier', None),
@@ -172,7 +180,7 @@ class dhcpRequestBuilder(object):
                 'Vendor class identifier', 'Request IP address']
 
 
-class dhcpAckBuilder():
+class DhcpAckBuilder(object):
     """
       TIME: 04:02:51.628899
         IP: > (0c:c4:7a:51:5d:44) >  (78:19:f7:86:5b:89)
@@ -220,7 +228,7 @@ class dhcpAckBuilder():
         self.__instance = None
 
     def __call__(self, params):
-        self.__instance = dhcpOptionHandlerFactory(
+        self.__instance = DhcpOptionHandlerFactory(
             dhcp_message_type=params.get('DHCP message type', None),
             subnet_mask=params.get('Subnet mask', None),
             ip_address_lease_time=params.get('IP address leasetime', None),
@@ -239,7 +247,8 @@ class dhcpAckBuilder():
         return ['DHCP message type', 'IP address leasetime', 'file_or_sname', 'Routers',
                 'DNS server', 'Host name ', 'Server identifier', 'T1', 'T2']
 
-class dhcpOfferBuilder(object):
+
+class DhcpOfferBuilder(object):
     """
     TIME: 07:03:16.200649
     IP: > (0c:c4:7a:51:5d:44) >  (00:1f:12:37:1f:41)
@@ -266,11 +275,12 @@ class dhcpOfferBuilder(object):
     OPTION:  58 (  4) T1                        900 (15m)
     OPTION:  59 (  4) T2                        1800 (30m)
     """
+
     def __init__(self):
         self.__instance = None
 
     def __call__(self, params):
-        self.__instance = dhcpOptionHandlerFactory(
+        self.__instance = DhcpOptionHandlerFactory(
             dhcp_message_type=params.get('DHCP message type', None),
             subnet_mask=params.get('Subnet mask', None),
             routers=params.get('Routers', None),
@@ -281,6 +291,7 @@ class dhcpOfferBuilder(object):
             t2=params.get('T2', None)
         )
         return self.__instance
+
 
 class ObjectFactory:
     def __init__(self):
@@ -293,4 +304,4 @@ class ObjectFactory:
         builder = self._builders.get(key)
         if not builder:
             raise ValueError(key)
-        return builder(params)[ayush@dev-dhcp-server ~]$ 
+        return builder(params)
