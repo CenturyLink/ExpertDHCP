@@ -28,6 +28,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
 
 class DataHandler(object):
+    # Constructor
     def __init__(self, stream_object, myfilter=None, csv_filename='/dhcp_packets.csv'):
         # self.filename = 'dhcpdump.csv'
         self.filename = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + csv_filename
@@ -38,14 +39,18 @@ class DataHandler(object):
         self.packet_drop_count = 0
         self.dataframe = None
 
+    # Reset dump file by deleting it and recreating it
     def reset_dump_collection_file(self):
         if os.path.exists(self.filename):
             os.remove(self.filename)
         with open(self.filename, 'w') as file:
             pass
 
+    # Creates a DHCP data frame 
     def create_dataframe(self):
+        # If dump file size is less than 200 KB
         if os.stat(self.filename).st_size / (1024 * 1024) < 200:
+            # Read from stream object
             for message in self.stream_object.generate_dump():
                 print('hi1')
                 print('%' * 100)

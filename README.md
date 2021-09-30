@@ -1,9 +1,14 @@
-Expert DHCP is a complete DHCP (Dynamic Host Configuration Protocol) system that
-allows for controlling multiple geographically distributed DHCP servers using a 
-web based UI. It uses ISC KEA DHCP (https://www.isc.org/kea/, 
-https://gitlab.isc.org/isc-projects/kea) as the base DHCP server and adds a REST
-API layer and a web UI to make controlling DHCP easier for systems 
-administrators and network engineers.
+Expert DHCP is a frontend GUI and accompanying REST service that
+works in conjunction with ISC KEA DHCP (https://www.isc.org/kea/, 
+https://gitlab.isc.org/isc-projects/kea).
+
+The Expert DHCP REST service can be used to control many aspects of the KEA DHCP
+server. In addition, the Expert DHCP frontend GUI make DHCP provisioning easy 
+for administrators.
+
+Expert DHCP facilitates DHCP administrators to control multiple KEA DHCP servers
+located in geographically different areas.
+
 
 **Architecture Diagram**
 ![Architecture Diagram](docs/Expert_DHCP_Architecture_Diagram.png)
@@ -11,11 +16,40 @@ administrators and network engineers.
 **Deployment Example**
 ![Deployment Diagram](docs/Expert_DHCP_Multi_Location_Deployment_Scenario.png)
 
-- **Features**
+- **General Features**
   - Control geographically redundant KEA DHCP servers from a single WEB UI 
   - Configure subnets, reservations, classes and other aspects of KEA DHCP
     using a web UI
   - Capture DHCP packets for troubleshooting 
+
+- **REST API Features**
+  - Get DHCP configuration
+  - Get IP from a given MAC address
+  - Get reservations
+  - Add reservations
+  - Delete reservations
+  - Add subnet
+  - Delete subnet
+  - Modify subnet
+  - Add subnet options
+  - Delete subnet options
+  - Add subnet reservation options
+  - Delete subnet reservation options
+  - Get leases
+  - Add lease
+  - Update lease
+  - Delete lease
+  - Delete all client leases for a subnet
+  - Add class
+  - Delete class
+  - Modify class
+
+- **GUI Features**
+  - Configure subnets
+  - Configure leases
+  - Configure client classes
+  - DHCPDUMP console (future)
+  - RAW REST API console
  
 - **Platforms**
   - Linux
