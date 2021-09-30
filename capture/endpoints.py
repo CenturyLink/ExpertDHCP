@@ -38,92 +38,107 @@ log_handler_instance = LogHandler(logfile=KEA_LOGPATH)
 log_map_handler = DataHandler(log_handler_instance)
 data_handler = DataHandler(stream_instance)
 
-
-#######################################################################################################################
-#                                            FAST API AUTH HOOK START                                                 #
-#######################################################################################################################
-
+# Check for API keys if REQUIRE_API_AUTHENTICATION is enabled in 
 if REQUIRE_API_AUTHENTICATION:
-    from fast_api_auth.utility.helpers import get_authenticator
-
-    RAW_API_CODE = '***'
     GET_AUTH_TOKEN_API = '111'
-
     ERROR_5000 = "5000"
-    ERROR_5000_VALUE = "Unauthorised"
+    ERROR_5000_VALUE = "Invalid request"
     ERROR_5001 = "5001"
-    ERROR_5001_VALUE = "Could not connect to Mongo DB server"
+    ERROR_5001_VALUE = "Could not find API key in request"
+    ERROR_5002 = "5002"
+    ERROR_5002_VALUE = "Incorrect API key"
 
-    ADMIN_API = ['status', 'rows', 'trigger', 'terminate', 'row_count']
+    # This function will be called every time a request is received. In case
+    # the request is a GET, then apikey is extracted from the GET request and
+    # checked for validity. Other requests are handled similarly.
+    @BP.before_request
+    def check_auth():
+        print("DEBUG: request.endpoint = " + str(request.endpoint))
+        LOGGER.debug("request.endpoint = " + str(request.endpoint))
+        if request.endpoint == "dhcp4.home":
+            return            
 
-    authenticator = get_authenticator(SERVICE_CODE)
+        # If request method is POST
+        if request.method == 'POST':
+            print("DEBUG: request is POST")
+            LOGGER.debug("DEBUG: request is POST")
 
-    @MONITOR_BP.before_request
-    def require_auth_token():
-        if request.endpoint.split('.')[-1] not in ['home', 'get_auth_token']:
-            hdr_token = request.headers['auth-token'] if 'auth-token' in request.headers else ''
-            admin_req = True if request.endpoint.split('.')[-1] in ADMIN_API else False
-            if not authenticator.check_api_key(hdr_token, admin_required=admin_req):
-                auth, data = authenticator.verify_auth_token(hdr_token, admin_required=admin_req)
-                if not auth:
-                    return response_generator(
-                        STATUS_KO,
-                        HTTP_200,
-                        SERVICE_CODE + RAW_API_CODE + ERROR_5000,
-                        ERROR_5000_VALUE,
-                        {'error': data}
-                    )
+            # Extract POST data, look for API key and handle verification
+            json_req_data = request.get_json()
 
-    @MONITOR_BP.route("/token", methods=['POST'])
-    @cross_origin()
-    def get_auth_token():
-        """
-            A HTTP GET function to GET an AUTH Token
-        """
-        from pymongo.errors import ServerSelectionTimeoutError
-        json_req_data = request.get_json()
-        if not json_req_data:
-            return response_generator(
-                STATUS_KO,
-                HTTP_401,
-                SERVICE_CODE + GET_AUTH_TOKEN_API + ERROR_4001,
-                ERROR_4001_VALUE,
-                {'error': ERROR_4001_VALUE})
-        else:
-            try:
-                token = authenticator.generate_auth_token(json_req_data['username'],
-                                                          json_req_data['password']).decode('utf8')
+            # If no JSON POST request data is found, then return error
+            if not json_req_data:
+                LOGGER.info("Error - No JSON data")
+                print("Error - No JSON data")
                 response = response_generator(
                     STATUS_KO,
-                    HTTP_200,
-                    SERVICE_CODE + GET_AUTH_TOKEN_API + SUCCESS_1000,
-                    SUCCESS_1000_VALUE,
-                    {"token": token})
-            except ServerSelectionTimeoutError as excp:
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                response = response_generator(
-                    STATUS_KO,
-                    HTTP_200,
-                    SERVICE_CODE + GET_AUTH_TOKEN_API + ERROR_5001,
-                    ERROR_5001_VALUE,
-                    {"error": str(excp)}
-                )
-            except Exception as excp:
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                file_name = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                response = response_generator(
-                    STATUS_KO,
-                    HTTP_200,
-                    SERVICE_CODE + GET_AUTH_TOKEN_API + ERROR_4000,
-                    ERROR_4000_VALUE,
-                    {"error": str(excp)}
-                )
-            return response
+                    HTTP_400,
+                    SERVICE_CODE + CHECK_AUTH_API + ERROR_5000,
+                    ERROR_5000_VALUE,
+                    {'error': ERROR_5000_VALUE})
+                LOGGER.error("JSON ERROR - > %s", ERROR_5000_VALUE)
+                return response
+           # If JSON POST request data is found, then ...
+            else:
+                # If API key is found in JSON data then ...
+                if "apikey" in json_req_data:
+                    apikey = json_req_data['apikey']
+                    print("DEBUG: apikey = " + str(apikey))
+                    verify_value = verify_api_key(apikey) 
+                    print("DEBUG: verify_value = " + str(verify_value))
 
-#######################################################################################################################
-#                                            FAST API AUTH HOOK END                                                   #
-#######################################################################################################################
+                    # If API key is incorrect, send an error back
+                    if verify_value == False:
+                        LOGGER.error("JSON ERROR - > %s", ERROR_5000_VALUE)
+                        return return_incorrect_api_key()
+                        
+                else:
+                    print("DEBUG: Could not find API key in request")
+                    LOGGER.error("JSON ERROR - > %s", ERROR_5001_VALUE)
+                    return return_no_api_key_found()
+
+        if request.method == 'GET':
+            print("DEBUG: request is GET")
+
+            # Extract GET arguments, look for API key and handle verification
+            api_key = request.args.get('apikey')
+            print("DEBUG: api_key = " + str(api_key))
+            LOGGER.debug("DEBUG: api_key = " + str(api_key))
+
+            # If no apikey is found then return error
+            if api_key is None:
+                return return_no_api_key_found()
+            else:
+                print("DEBUG: api_key = " + str(api_key))
+                LOGGER.debug("DEBUG: api_key = " + str(api_key))
+
+                verify_value = verify_api_key(api_key)
+                print("DEBUG: check_auth(): verify_value = " + 
+                    str(verify_value))
+                LOGGER.debug("DEBUG: check_auth(): verify_value = " +
+                    str(verify_value))
+
+                if verify_value == False:
+                    print("DEBUG: check_auth(): returning incorrect api key \
+                          response")
+                    LOGGER.debug("DEBUG: check_auth(): returning incorrect \
+                                 api key response")
+                    return return_incorrect_api_key()
+
+        # Implement other methods here
+
+    def return_no_api_key_found():
+        response = response_generator(STATUS_KO, HTTP_400,
+            SERVICE_CODE + CHECK_AUTH_API + ERROR_5001,
+            ERROR_5001_VALUE, {'error': ERROR_5001_VALUE})
+        return response
+
+    def return_incorrect_api_key():
+        response = response_generator(STATUS_KO, HTTP_401,
+            SERVICE_CODE + CHECK_AUTH_API + ERROR_5002, ERROR_5002_VALUE,
+            {'error': ERROR_5002_VALUE})
+        return response
+
 
 def start_threads():
     try:

@@ -7,23 +7,25 @@ from queue import PriorityQueue
 from utils import check_path, MONITOR_LOGGER
 from config import SYSTEM_IP
 
+# Create message_option_handler factory and register builders
 factory = message_option_handler.ObjectFactory()
 factory.register_builder('DHCPACK', message_option_handler.DhcpAckBuilder())
 factory.register_builder('DHCPNAK', message_option_handler.DhcpNackBuilder())
-factory.register_builder('DHCPDISCOVER', message_option_handler.DhcpDiscoverBuilder())
-factory.register_builder('DHCPREQUEST', message_option_handler.DhcpRequestBuilder())
+factory.register_builder('DHCPDISCOVER', 
+    message_option_handler.DhcpDiscoverBuilder())
+factory.register_builder('DHCPREQUEST', 
+    message_option_handler.DhcpRequestBuilder())
 factory.register_builder('DHCPOFFER', message_option_handler.DhcpOfferBuilder())
 
+# Setup log and message queues
 log_queue = PriorityQueue()
 msg_queue = PriorityQueue()
 incoming_msg_queue = PriorityQueue()
 outgoing_msg_queue = PriorityQueue()
 
+# Set PANDAS width and max columns
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
-
-#systemIP = "172.28.12.132"
-
 
 class DataHandler(object):
     def __init__(self, stream_object, myfilter=None, csv_filename='/dhcp_packets.csv'):
