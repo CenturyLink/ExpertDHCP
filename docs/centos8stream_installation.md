@@ -1,11 +1,35 @@
-**Centos 8 Stram - KEA DHCP Installation and Configuration**
+**CentOS 8 Stream - KEA DHCP Installation and Configuration**
 
 <br />
 
-Note: This installation assumes that you have Centos 7 already installed and 
-updated. These instructions were tested with Centos 7 3.10.0-1160.el7.x86_64.
+Note: This installation assumes that you have CentOS Stream 8 already installed 
+and updated. 
 
-<br />
+**Versions**
+
+CentOS Stream 8
+```
+NAME="CentOS Stream"
+VERSION="8"
+ID="centos"
+ID_LIKE="rhel fedora"
+VERSION_ID="8"
+PLATFORM_ID="platform:el8"
+PRETTY_NAME="CentOS Stream 8"
+ANSI_COLOR="0;31"
+CPE_NAME="cpe:/o:centos:centos:8"
+HOME_URL="https://centos.org/"
+BUG_REPORT_URL="https://bugzilla.redhat.com/"
+REDHAT_SUPPORT_PRODUCT="Red Hat Enterprise Linux 8"
+REDHAT_SUPPORT_PRODUCT_VERSION="CentOS Stream"
+```
+
+Kea DHCP
+```
+kea.x86_64                   1.8.0-2.el8                @epel     
+kea-libs.x86_64              1.8.0-2.el8                @epel  
+```
+
 <br />
 
 
@@ -19,7 +43,7 @@ sudo yum install epel-release
 
 **STEP 2 - Install KEA DHCP server**
 
-Install the kea packaget using **yum**
+Install the kea package using **yum**
 
 ```
 sudo yum install kea

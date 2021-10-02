@@ -1,58 +1,42 @@
-**CentOS 7 - KEA DHCP Installation and Configuration**
+**FreeBSD 13 - KEA DHCP Installation and Configuration**
 <br />
 
-Note: This installation assumes that you have CentOS 7 already installed and 
-updated. These instructions were tested with CentOS 7 3.10.0-1160.el7.x86_64.
+Note: This installation assumes that you have FreeBSD 13 already installed and 
+updated.
 
 **Versions**
 
-CentOS 7
+FreeBSD 13
 ```
-NAME="CentOS Linux"
-VERSION="7 (Core)"
-ID="centos"
-ID_LIKE="rhel fedora"
-VERSION_ID="7"
-PRETTY_NAME="CentOS Linux 7 (Core)"
+NAME=FreeBSD
+VERSION=13.0-RELEASE
+VERSION_ID=13.0
+ID=freebsd
 ANSI_COLOR="0;31"
-CPE_NAME="cpe:/o:centos:centos:7"
-HOME_URL="https://www.centos.org/"
-BUG_REPORT_URL="https://bugs.centos.org/"
-CENTOS_MANTISBT_PROJECT="CentOS-7"
-CENTOS_MANTISBT_PROJECT_VERSION="7"
-REDHAT_SUPPORT_PRODUCT="centos"
-REDHAT_SUPPORT_PRODUCT_VERSION="7"
+PRETTY_NAME="FreeBSD 13.0-RELEASE"
+CPE_NAME=cpe:/o:freebsd:freebsd:13.0
+HOME_URL=https://FreeBSD.org/
+BUG_REPORT_URL=https://bugs.FreeBSD.org/
 ```
 
 Kea DHCP
-
 ```
-kea.x86_64              1.6.0-4.el7          @epel    
-kea-libs.x86_64         1.6.0-4.el7          @epel
+kea-1.8.2_1                    Alternative DHCP implementation by ISC
 ```
 
 <br />
 
-**STEP 1 - Install epel-release**
+**STEP 1 - Install KEA DHCP server**
 
-Install the epel-release package using **yum**.
-
-```
-sudo yum install epel-release
-```
-
-
-**STEP 2 - Install KEA DHCP server**
-
-Install the kea package using **yum**
+Install the kea package using **pkg**
 
 ```
-sudo yum install kea
+sudo pkg install kea
 ```
+**STEP 2 - Configure kea-ctrl-agent.conf file**
 
-**STEP 3 - Configure kea-ctrl-agent.conf file**
-
-Ensure that the /etc/kea/kea-ctrl-agent.conf has the following parameters set:
+Ensure that the /usr/local/etc/kea/kea-ctrl-agent.conf has the following 
+parameters set:
 
 ```
 .
@@ -78,9 +62,9 @@ document.
 
 **STEP 4 - Configure kea-dhcp4.conf file**
 
-Configure the /etc/kea/kea-dhcp4.conf file. An explanation of all the parameters
-in this file are beyond the scope of this document. A good place to learn about
-how this file works, would be https://kb.isc.org/docs/aa-01615 and 
+Configure the /usr/local/etc/kea/kea-dhcp4.conf file. An explanation of all the
+parameters in this file are beyond the scope of this document. A good place to 
+learn about how this file works, would be https://kb.isc.org/docs/aa-01615 and 
 https://kb.isc.org. 
 
 Below, a sample configuration for a single subnet is given. 

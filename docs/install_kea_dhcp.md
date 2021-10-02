@@ -2,4 +2,4 @@
 
 - **Linux**
   - [Centos 7](centos7_installation.md)
-  - [Centos 8 Steam](centos8stream_installation.md)
+  - [Centos 8 Stream](centos8stream_installation.md)
