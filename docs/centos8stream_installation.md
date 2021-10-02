@@ -1,4 +1,5 @@
-**Centos 7 - KEA DHCP Installation and Configuration**
+**Centos 8 Stram - KEA DHCP Installation and Configuration**
+
 <br />
 
 Note: This installation assumes that you have Centos 7 already installed and 
@@ -7,6 +8,7 @@ updated. These instructions were tested with Centos 7 3.10.0-1160.el7.x86_64.
 <br />
 <br />
 
+
 **STEP 1 - Install epel-release**
 
 Install the epel-release package using **yum**.
@@ -14,7 +16,6 @@ Install the epel-release package using **yum**.
 ```
 sudo yum install epel-release
 ```
-
 
 **STEP 2 - Install KEA DHCP server**
 
