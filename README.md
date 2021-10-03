@@ -1,12 +1,12 @@
-Expert DHCP is a frontend GUI and accompanying REST service that
-works in conjunction with ISC KEA DHCP (https://www.isc.org/kea/, 
+ExpertDHCP is a frontend GUI and accompanying REST service that
+works in conjunction with ISC Kea DHCP (https://www.isc.org/kea/, 
 https://gitlab.isc.org/isc-projects/kea).
 
-The Expert DHCP REST service can be used to control many aspects of the KEA DHCP
-server. In addition, the Expert DHCP frontend GUI makes DHCP provisioning easy 
+The Expert DHCP REST service can be used to control many aspects of the Kea DHCP
+server. In addition, the ExpertDHCP frontend GUI makes DHCP provisioning easy 
 for administrators.
 
-Expert DHCP facilitates DHCP administrators to control multiple KEA DHCP servers
+ExpertDHCP facilitates DHCP administrators to control multiple Kea DHCP servers
 located in geographically different areas.
 
 <br />
@@ -22,8 +22,8 @@ located in geographically different areas.
 <br />
 
 - **General Features**
-  - Control geographically redundant KEA DHCP servers from a single WEB UI 
-  - Configure subnets, reservations, classes and other aspects of KEA DHCP
+  - Control geographically redundant Kea DHCP servers from a single WEB UI 
+  - Configure subnets, reservations, classes and other aspects of Kea DHCP
     using a web UI
   - Capture DHCP packets for troubleshooting 
 
@@ -63,9 +63,10 @@ located in geographically different areas.
   <br />
  
 - **Platforms**
-  - Linux
+  - Linux (CentOS)
+  - FreeBSD
 
   <br />
 
-- **Getting Master DHCP**
+- **Documentation**
   - [Documentation](docs/documentation.md)
