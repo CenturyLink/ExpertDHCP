@@ -1,4 +1,5 @@
 **CentOS 8 Stream - KEA DHCP Installation and Configuration**
+-
 
 <br />
 
@@ -6,6 +7,7 @@ Note: This installation assumes that you have CentOS Stream 8 already installed
 and updated. 
 
 **Versions**
+-
 
 CentOS Stream 8
 ```
@@ -34,6 +36,7 @@ kea-libs.x86_64              1.8.0-2.el8                @epel
 
 
 **STEP 1 - Install epel-release**
+-
 
 Install the epel-release package using **yum**.
 
@@ -42,6 +45,7 @@ sudo yum install epel-release
 ```
 
 **STEP 2 - Install KEA DHCP server**
+-
 
 Install the kea package using **yum**
 
@@ -50,6 +54,7 @@ sudo yum install kea
 ```
 
 **STEP 3 - Configure kea-ctrl-agent.conf file**
+-
 
 Ensure that the /etc/kea/kea-ctrl-agent.conf has the following parameters set:
 
@@ -76,6 +81,7 @@ There are many other options in this file, which are beyond the scope of this
 document.
 
 **STEP 4 - Configure kea-dhcp4.conf file**
+-
 
 Configure the /etc/kea/kea-dhcp4.conf file. An explanation of all the parameters
 in this file are beyond the scope of this document. A good place to learn about
@@ -173,6 +179,7 @@ by setting dhcp6=no in /etc/kea/keactrl.conf. If you run DHCPv6 and have issues
 with it, please check the KEA DHCP server documentation.
 
 **STEP 5 - Start keactrl**
+-
 
 Start the KEA DHCP server by issuing the following command as super user:
 

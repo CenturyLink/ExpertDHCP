@@ -1,10 +1,12 @@
 **FreeBSD 13 - KEA DHCP Installation and Configuration**
+-
 <br />
 
 Note: This installation assumes that you have FreeBSD 13 already installed and 
 updated.
 
 **Versions**
+-
 
 FreeBSD 13
 ```
@@ -27,6 +29,7 @@ kea-1.8.2_1                    Alternative DHCP implementation by ISC
 <br />
 
 **STEP 1 - Install KEA DHCP server**
+-
 
 Install the kea package using **pkg**
 
@@ -34,6 +37,7 @@ Install the kea package using **pkg**
 sudo pkg install kea
 ```
 **STEP 2 - Configure kea-ctrl-agent.conf file**
+-
 
 Ensure that the /usr/local/etc/kea/kea-ctrl-agent.conf has the following 
 parameters set:
@@ -61,6 +65,7 @@ There are many other options in this file, which are beyond the scope of this
 document.
 
 **STEP 4 - Configure kea-dhcp4.conf file**
+-
 
 Configure the /usr/local/etc/kea/kea-dhcp4.conf file. An explanation of all the
 parameters in this file are beyond the scope of this document. A good place to 
@@ -158,6 +163,7 @@ by setting dhcp6=no in /etc/kea/keactrl.conf. If you run DHCPv6 and have issues
 with it, please check the KEA DHCP server documentation.
 
 **STEP 5 - Start keactrl**
+-
 
 Start the KEA DHCP server by issuing the following command as super user:
 
