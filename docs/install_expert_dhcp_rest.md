@@ -23,6 +23,7 @@ Note: For many of the steps below, you will need to use "**sudo -u expertdhcp**"
 command to execute commands as the "**expertdhcp**" user.
 
 <br />
+
 **STEP 1 - Create expertdhcp user**
 -
 
@@ -358,6 +359,7 @@ sudo supervisorctl status all
 
 The above command will show the status of all programs controlled by 
 Supervisord.
+
 <br />
 
 **STEP 9 - Configure and start Nginx as HTTP proxy**
@@ -378,7 +380,7 @@ server {
     }
 }
 ```
-
+<br />
 **STEP 10 - Test if the system is working**
 -
 
