@@ -9,8 +9,8 @@ import requests
 import git
 from flask import Response
 from datetime import datetime
-from expertdhcp import LOGGER, create_dir
-from fast_dhcp.config import PARENT_FOLDER, BACKUP_REPOSITORY_NAME, BACKUP_FOLDER, KEY_CONFIG_GET, \
+from restservice import LOGGER, create_dir
+from restservice.config import PARENT_FOLDER, BACKUP_REPOSITORY_NAME, BACKUP_FOLDER, KEY_CONFIG_GET, \
     KEY_SERVICE_DHCP4, VAL_MAC, LEASE_RETREIVAL_FAILED, KEA_SERVER_CON_ERROR, KEY_RESERVATIONS, \
     CONFIG_RETREIVAL_FAILED, DHCP_URL, KEY_LEASE4_GET, KEY_LEASE_IDENTIFIER_TYPE, \
     KEY_LEASE_IDENTIFIER, DHCP_PORT, SUBNET_NOT_FOUND, KEY_LEASE_SUBNETID, DHCP_IP, KEY_CONFIG_TEST, \

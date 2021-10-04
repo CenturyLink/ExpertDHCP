@@ -1,4 +1,4 @@
-from dhcpservice.config import LOG_FILE_NAME
+from restservice.config import LOG_FILE_NAME
 
 
 def create_dir(dir_path):

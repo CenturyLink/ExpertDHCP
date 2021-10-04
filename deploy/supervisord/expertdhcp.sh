@@ -1,22 +1,43 @@
 #!/usr/local/bin/bash
 #
-# This script starts up ExpertDHCP using Gunicorn
+# This script starts up ExpertDHCP using Gunicorn.
 
-NAME="expertdhcp" # Name of process/daemon
-USER=expertdhcp # User account whose permissions will be used to run this daemon
-GROUP=expertdhcp # Group account whose permissions will be used to run this daemon
-NUM_WORKERS=10 # Number of gunicorn workers to start
-NUM_THREADS=2 # Number of gunicorn threads per worker
-PROJECT_DIRECTORY=/opt/ExpertDHCP-main # Path of ExpertDHCP project directory
-PIDFILE=/opt/ExpertDHCP-main/ # File where process PID will br written
-HOST=127.0.0.1 # IP address to listen on
-PORT=8007 # Port to which the ExpertDHCP REST service will bind and listen on
+# Name of the process as run by Gunicorn.
+NAME="expertdhcp"
 
-# Gunicorn error log file path
+# User whose permissions the daemon will run with.
+USER=expertdhcp 
+
+# Group whose permissions the daemon will run with.
+GROUP=expertdhcp
+
+# Number of Gunicorn worker processes to spawn.
+NUM_WORKERS=5
+
+# Number of threads per worker.
+NUM_THREADS=2
+
+# Path of directory where the ExpertDHCP is located.
+PROJECT_DIRECTORY=/opt/ExpertDHCP-main
+
+# IP address on which to listen. This should be left as localhost, and a front
+# facing proxy such as Nginx should be used on the public interface.
+HOST=127.0.0.1
+
+# Port to which the ExpertDHCP process will bind to.
+PORT=8007
+
+# Location of the Gunicorn error log file
 GUNICORN_ERROR_LOG=/var/log/expertdhcp/gunicorn-error.log
 
-# Gunicorn access log file path
+# Location of the Gunicorn access log file
 GUNICORN_ACCESS_LOG=/var/log/expertdhcp/gunicorn-access.log
+
+# Location of the Gunicorn executable
+GUNICORN_DIRECTORY=$PROJECT_DIRECTORY/venv/
+
+# Python path
+PYTHONPATH=$GUNICORN_DIRECTORY
 
 # Change to project directory 
 cd  $PROJECT_DIRECTORY
@@ -33,6 +54,8 @@ if [ $? -ne 0 ]; then
     echo ",\"message\":\"Could not activate virtual env\"}"
     exit
 fi
+
+
 
 # Export Python path
 export PYTHONPATH=$GUNICORN_DIRECTORY:$PYTHONPATH
@@ -56,7 +79,6 @@ exec ./venv/bin/gunicorn \
     --access-logfile $GUNICORN_ACCESS_LOG \
     --workers=$NUM_WORKERS \
     --threads=$NUM_THREADS \
-    --pid $PIDFILE \
     run:DHCP_APP
 
 # Check if process started correctly and print relevant information

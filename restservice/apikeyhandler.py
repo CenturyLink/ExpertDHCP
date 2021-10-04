@@ -14,8 +14,8 @@ def verify_api_key(apikey):
 
     api_key_csv = open(API_KEYS_CSV, 'r')
     if api_key_csv == None: 
-        print("ERROR: api_key_csv is empty or a file read issue has been \ 
-              encountered")
+        print("ERROR: api_key_csv is empty or a file read issue has been \
+            encountered")
         LOGGER.error("ERROR: api_key_csv is empty or a file read issue has \
             been encountered")
         return False
