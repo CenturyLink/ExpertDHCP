@@ -265,7 +265,6 @@ def get_kea_config():
     from DHCP server.
     :return : Response config object
     """
-    print("DEBUG: get_kea_config(): Enter")
     LOGGER.info("Request url -> /dhcp4/config")
     LOGGER.info("Request Method -> GET")
     try:

@@ -62,7 +62,7 @@ sudo yum install supervisor
 Once Supervisord has been installed it needs to be enabled and started using the
 following command.
 ```
-sudo systemctl enabled supervisord
+sudo systemctl enable supervisord
 sudo systemctl start supervisord
 ```
 
@@ -120,6 +120,7 @@ A Python (3.6 plus) environment is needed to run the ExpertDHCP REST service.
 
 Generate a new Python virtual environment named "**venv**" in the 
 /opt/ExpertDHCP directory.
+
 ```
 cd /opt/ExpertDHCP
 python3 -m venv venv
@@ -260,9 +261,9 @@ Modify the file as necessary for the local install environment.
 -
 
 Configure ExpertDHCP REST service behavior by modifying the ExpertDHCP
-configuration file located at ExpertDHCP/restserviceconf/config.ini. A sample of
-the file containing explanatory comments is given here and it should be
-modified to suit the local environment.
+configuration file located at **ExpertDHCP/restservice/conf/config.ini**. A 
+sample of the file containing explanatory comments is given here and it should 
+be modified to suit the local environment.
 
 ```
 [EXPERTDHCP]
@@ -329,6 +330,11 @@ LOG_FILE_BACKUP_COUNT = 5
 LOG_LEVEL=DEBUG
 ```
 
+Create the **apikeys.csv** file with the format given above. Ensure that the 
+API keys file is unreadable by any user other than the **expertdhcp** user. 
+Change the **API_KEYS_CSV** variable in the 
+**ExpertDHCP/restservice/conf/config.ini** file to reflect the location of this
+file.
 <br />
 
 
@@ -380,14 +386,18 @@ server {
     }
 }
 ```
+
+It is highly recommended that HTTPS be enable for any external facing 
+production service.  For security, SSL/TLS certificates can be installed for 
+Nginx. This is a highly recommended practice for production deployments. Please 
+see Nginx documentation for more information
 <br />
+
 **STEP 10 - Test if the system is working**
 -
 
 Use curl or another HTTP client to check if the ExpertDHCP is working correctly
 or not
 
-
-
-
+**Troubleshooting**
 
