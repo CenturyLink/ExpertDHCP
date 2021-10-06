@@ -86,6 +86,7 @@ The ExpertDHCP repository is located at
 https://github.com/CenturyLink/ExpertDHCP and can be cloned using the following 
 command.
 ```
+cd /opt
 git clone git@github.com:CenturyLink/ExpertDHCP.git
 ```
 
@@ -119,7 +120,8 @@ chown expertdhcp:expertdhcp /var/log/expertdhcp
 A Python (3.6 plus) environment is needed to run the ExpertDHCP REST service. 
 
 Generate a new Python virtual environment named "**venv**" in the 
-/opt/ExpertDHCP directory.
+/opt/ExpertDHCP directory. Note: You may need to switch to the **"expertdhcp"**
+user to complete the instructions below.
 
 ```
 cd /opt/ExpertDHCP
@@ -159,7 +161,7 @@ The file contains comments on the functionality of each variable. A sample of
 this file is given below. 
 
 ```
-#!/usr/local/bin/bash
+#!/usr/bin/bash
 #
 # This script starts up ExpertDHCP using Gunicorn.
 
@@ -253,7 +255,16 @@ else
 fi
 ```
 
-Modify the file as necessary for the local install environment.
+Although the above file is expected to work as is, in some install environments,
+ modifications to the above file may be necessary.
+
+The location of the bash shell in the above script should be changed if 
+necessary.
+
+Make the **expertdhcp.sh** file executable using the following command.
+```
+chmod +x /opt/ExpertDHCP/deploy/supervisord/expertdhcp.sh
+```
 
 <br />
 
@@ -346,7 +357,7 @@ ExpertDHCP program.
 
 ```
 [program:expertdhcp]
-command=/opt/ExpertDHCP-main/deploy/supervisord/supervisord.sh
+command=/opt/ExpertDHCP/deploy/supervisord/expertdhcp.sh
 process_name=%(program_name)s
 numprocs=1
 ```
@@ -391,9 +402,22 @@ It is highly recommended that HTTPS be enable for any external facing
 production service.  For security, SSL/TLS certificates can be installed for 
 Nginx. This is a highly recommended practice for production deployments. Please 
 see Nginx documentation for more information
+
+Nginx should be restarted afer adding the server clause. Note: for Linux SE 
+Linux should be set to **permissive**.
+
 <br />
 
-**STEP 10 - Test if the system is working**
+**STEP 10 - Allow firewall acces to ExpertDHCP REST service port**
+-
+
+Default configuration asks for port 5007 to be open for external clients to 
+connect to the ExpertDHCP REST service. A sample Linux FirewallD rule is given 
+below to allow clients to connect to port 5007.
+```
+```
+
+**STEP 11 - Test if the system is working**
 -
 
 Use curl or another HTTP client to check if the ExpertDHCP is working correctly

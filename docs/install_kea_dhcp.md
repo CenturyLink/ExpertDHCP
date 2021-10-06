@@ -2,7 +2,7 @@
 
 - **Linux**
   - [Centos 7](centos7_installation.md)
-  - [Centos 8 Stream](centos8stream_installation.md)
+  - [Rocky Linux 8.4](rockylinux-8.4.md)
 
 - **FreeBSD**
   - [FreeBSD](freebsd13_installation.md)

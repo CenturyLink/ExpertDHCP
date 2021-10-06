@@ -55,8 +55,6 @@ if [ $? -ne 0 ]; then
     exit
 fi
 
-
-
 # Export Python path
 export PYTHONPATH=$GUNICORN_DIRECTORY:$PYTHONPATH
 
