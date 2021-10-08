@@ -88,6 +88,13 @@ in this file are beyond the scope of this document. A good place to learn about
 how this file works, would be https://kb.isc.org/docs/aa-01615 and 
 https://kb.isc.org. 
 
+A sample configuration for Kea DHCP 4 is given below.
+
+At the time of this writing, Kea version 1.8 is the most current Kea
+DHCP software available on the Rocky Linux 8.4 EPEL repo. If a 
+newer version of Kea is made available, the configuration below 
+might not work correctly.
+
 **Kea version 1.8** kea-dhcp4.conf example.
 ```
 [asghar@expertdhcp-rocky-8 ~]$ cat /etc/kea/kea-dhcp4.conf

@@ -88,26 +88,30 @@ in this file are beyond the scope of this document. A good place to learn about
 how this file works, would be https://kb.isc.org/docs/aa-01615 and 
 https://kb.isc.org. 
 
-Below, a sample configuration for a single subnet is given. 
+A sample configuration for Kea DHCP 4 is given below.
 
+At the time of this writing, Kea version 1.8 is the most current Kea
+DHCP software available on the Centos 8 Stream EPEL repo. If a 
+newer version of Kea is made available, the configuration below 
+might not work correctly.
+
+**Kea version 1.8** kea-dhcp4.conf example.
 ```
+[asghar@expertdhcp-rocky-8 ~]$ cat /etc/kea/kea-dhcp4.conf
 {
 "Dhcp4": {
     "interfaces-config": {
-        "interfaces": [ "ens4" ]
+        "interfaces": [ "ens3" ]
     },
 
     "control-socket": {
         "socket-type": "unix",
-        "socket-name": "/tmp/kea-dhcp4-ctrl.sock"
+        "socket-name": "/tmp/kea4-ctrl-socket"
     },
 
     "lease-database": {
-        // Memfile is the simplest and easiest backend to use. It's a in-memory
-        // C++ database that stores its state in CSV file.
         "type": "memfile",
-        "lfc-interval": 3600,
-        "name": "/var/lib/kea/dhcp4.leases"
+        "lfc-interval": 3600
     },
 
     "expired-leases-processing": {
@@ -126,23 +130,104 @@ Below, a sample configuration for a single subnet is given.
     "option-data": [
         {
             "name": "domain-name-servers",
-            "data": "10.10.10.2"
+            "data": "192.0.2.1, 192.0.2.2"
+        },
+
+        {
+            "code": 15,
+            "data": "example.org"
+        },
+
+        {
+            "name": "domain-search",
+            "data": "mydomain.example.com, example.com"
+        },
+
+        {
+            "name": "boot-file-name",
+            "data": "EST5EDT4\\,M3.2.0/02:00\\,M11.1.0/02:00"
+        },
+
+        {
+            "name": "default-ip-ttl",
+            "data": "0xf0"
         }
     ],
-    //"client-classes": [{}],
+
+    "client-classes": [
+        {
+            "name": "voip",
+
+            "test": "substring(option[60].hex,0,6) == 'Aastra'",
+
+            "next-server": "192.0.2.254",
+            "server-hostname": "hal9000",
+            "boot-file-name": "/dev/null"
+
+        }
+    ],
 
     "subnet4": [
         {
-            "subnet": "10.10.10.0/24",
-            "pools": [ { "pool": "10.10.10.200 - 10.10.10.254" } ],
+            "subnet": "192.0.2.0/24",
+
+            "pools": [ { "pool": "192.0.2.1 - 192.0.2.200" } ],
+
             "option-data": [
                 {
                     "name": "routers",
-                    "data": "10.10.10.1"
+                    "data": "192.0.2.1"
                 }
             ],
 
-            "reservations": [ ]
+            "reservations": [
+                {
+                    "hw-address": "1a:1b:1c:1d:1e:1f",
+                    "ip-address": "192.0.2.201"
+                },
+
+                {
+                    "client-id": "01:11:22:33:44:55:66",
+                    "ip-address": "192.0.2.202",
+                    "hostname": "special-snowflake"
+                },
+
+                {
+                    "duid": "01:02:03:04:05",
+                    "ip-address": "192.0.2.203",
+                    "option-data": [ {
+                        "name": "domain-name-servers",
+                        "data": "10.1.1.202, 10.1.1.203"
+                    } ]
+                },
+
+                {
+                    "client-id": "01:12:23:34:45:56:67",
+                    "ip-address": "192.0.2.204",
+                    "option-data": [
+                        {
+                            "name": "vivso-suboptions",
+                            "data": "4491"
+                        },
+                        {
+                            "name": "tftp-servers",
+                            "space": "vendor-4491",
+                            "data": "10.1.1.202, 10.1.1.203"
+                        }
+                    ]
+                },
+                {
+                    "client-id": "01:0a:0b:0c:0d:0e:0f",
+                    "ip-address": "192.0.2.205",
+                    "next-server": "192.0.2.1",
+                    "server-hostname": "hal9000",
+                    "boot-file-name": "/dev/null"
+                },
+                {
+                    "flex-id": "'s0mEVaLue'",
+                    "ip-address": "192.0.2.206"
+                }
+            ]
         }
     ],
 
@@ -151,25 +236,17 @@ Below, a sample configuration for a single subnet is given.
         "name": "kea-dhcp4",
         "output_options": [
             {
-                "output": "/var/log/kea-dhcp4.log",
-                "flush": true,
-                "maxsize": 1048576,
-                "maxver": 99
+                "output": "/var/log/kea-dhcp4.log"
             }
         ],
-        // This specifies the severity of log messages to keep. Supported values
-        // are: FATAL, ERROR, WARN, INFO, DEBUG
-        "severity": "DEBUG",
-
-        // If DEBUG level is specified, this value is used. 0 is least verbose,
-        // 99 is most verbose. Be cautious, Kea can generate lots and lots
-        // of logs if told to do so.
-        "debuglevel": 10 
+        "severity": "INFO",
+        "debuglevel": 0
     }
   ]
 }
 }
 ```
+
 
 The above configuration can be used for testing purposes and the subnet and 
 other settings changed as needed.

@@ -92,7 +92,11 @@ git clone git@github.com:CenturyLink/ExpertDHCP.git
 
 The repository should be cloned in a local directory of choice. Usually the 
 **/opt** directory works well. This document will assume that the ExpertDHCP 
-directory is **/opt/**
+directory is **/opt/**. If the **/opt** directory doesnt exist (on FreeBSD 
+systems, /opt does not exist by default), then it can be created. Any other 
+convenient location can also be used to install ExpertDHCP REST service. 
+Instructions in this document will assume that **/opt/ExpertDHCP** will be the
+installation directory for ExpertDHCP REST service.
 
 Ensure that the "expertdhcp" user created in STEP 1 owns the cloned directory.
 This can in general be done by issuing the following command.
