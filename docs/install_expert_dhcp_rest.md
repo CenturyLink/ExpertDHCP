@@ -8,6 +8,7 @@ ExpertDHCP has been installed and tested on hosts running FreeBSD and CentOS
 Linux.
 
 <br />
+
 **Prerequisites**
 -
   - Python 3.6 or above
@@ -438,13 +439,33 @@ Default configuration asks for port 5007 to be open for external clients to
 connect to the ExpertDHCP REST service. A sample Linux FirewallD rule is given 
 below to allow clients to connect to port 5007.
 ```
+sudo firewall-cmd --zone=public --add-port=5007/tcp --permanent
+sudo firewall-cmd --reload
 ```
+
+For FreeBSD, the commands will depend on which firewall is being used.
+
 
 **STEP 11 - Test if the system is working**
 -
 
-Use curl or another HTTP client to check if the ExpertDHCP is working correctly
-or not
+Use curl or another HTTP client to check if the ExpertDHCP is working correctly.
+
+The following command will allow the admin to check the status of the ExpertDHCP
+REST service functioning.
+
+```
+$ curl http://172.16.0.86:5007/dhcp4/
+
+{"status": "OK", "statusCode": "9000011000", "statusValue": "Command execution successful", "data": {"data": "DHCP Management server is up and running"}}
+```
 
 **Troubleshooting**
 
+For troubleshooting, run the **ExpertDHCP/deploy/supervisord/expertdhcp.sh** 
+file manually. This will show any problems that the service might be 
+experiencing.
+
+Gunicorn log files will be available in /var/log/expertdhcp and the ExpertDHCP
+REST service log file will be available in the path configured in the 
+ExpertDHCP/restservice/config.ini file.
