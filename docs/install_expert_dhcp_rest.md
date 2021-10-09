@@ -36,8 +36,12 @@ sudo useradd -m -s /sbin/nologin expertdhcp
 ```
 
 **FreeBSD**
+Create the user and set a secure password. Once setup is complete, the 
+ExpertDHCP user account can be locked.
+
 ```
-pw useradd -n expertdhcp -s /sbin/nologin -d /home/expertdhcp
+pw useradd -n expertdhcp -m -d /home/expertdhcp -s /bin/sh 
+passwd expertdhcp 
 ```
 
 Use the above system specific command to create the "expertdhcp" user.
@@ -77,6 +81,16 @@ Supervisord package on a given FreeBSD system, run the command
 pkg install -y py38-supervisor
 ```
 
+Enable Supervisord in /etc/rc.conf.
+```
+echo 'supervisord_enable="YES"' | sudo tee -a /etc/rc.conf
+```
+
+Start Supervisord.
+```
+sudo service supervisord start
+```
+
 <br />
 
 **STEP 3 - Get ExpertDHCP**
@@ -112,8 +126,8 @@ sudo chown -R expertdhcp:expertdhcp /opt/ExpertDHCP
 Create the "/var/log/expertdhcp" directory and change its owner and group to 
 "expertdhcp"
 ```
-mkdir /var/log/expertdhcp
-chown expertdhcp:expertdhcp /var/log/expertdhcp
+sudo mkdir /var/log/expertdhcp
+sudo chown expertdhcp:expertdhcp /var/log/expertdhcp
 ```
 
 <br />
@@ -137,9 +151,14 @@ Activate the newly created virtual environment.
 source ./venv/bin/activate
 ```
 
+If the **source** command is not available, an alternative is the use of the following notation.
+```
+. ./venv/bin/activate
+```
+
 Upgrade pip.
 ```
-sudo pip3 install --upgrade pip
+pip3 install --upgrade pip
 ```
 
 Install Python requirements.
@@ -165,7 +184,7 @@ The file contains comments on the functionality of each variable. A sample of
 this file is given below. 
 
 ```
-#!/usr/bin/bash
+#!/bin/sh
 #
 # This script starts up ExpertDHCP using Gunicorn.
 
@@ -185,7 +204,7 @@ NUM_WORKERS=5
 NUM_THREADS=2
 
 # Path of directory where the ExpertDHCP is located.
-PROJECT_DIRECTORY=/opt/ExpertDHCP-main
+PROJECT_DIRECTORY=/opt/ExpertDHCP
 
 # IP address on which to listen. This should be left as localhost, and a front
 # facing proxy such as Nginx should be used on the public interface.
@@ -349,7 +368,7 @@ Create the **apikeys.csv** file with the format given above. Ensure that the
 API keys file is unreadable by any user other than the **expertdhcp** user. 
 Change the **API_KEYS_CSV** variable in the 
 **ExpertDHCP/restservice/conf/config.ini** file to reflect the location of this
-file.
+file. This should be the full path to the **apikeys.csv** file.
 <br />
 
 
@@ -366,7 +385,7 @@ process_name=%(program_name)s
 numprocs=1
 ```
 
-Once the ExpertDHCP entry has been made, start the ExpertDHCP REST service by
+Once the ExpertDHCP entry has been made, start the ExpertDHCP REST service 
 issuing the following command.
 
 ```

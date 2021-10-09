@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/bin/sh
 #
 # This script starts up ExpertDHCP using Gunicorn.
 
@@ -18,7 +18,7 @@ NUM_WORKERS=5
 NUM_THREADS=2
 
 # Path of directory where the ExpertDHCP is located.
-PROJECT_DIRECTORY=/opt/ExpertDHCP-main
+PROJECT_DIRECTORY=/opt/ExpertDHCP
 
 # IP address on which to listen. This should be left as localhost, and a front
 # facing proxy such as Nginx should be used on the public interface.
@@ -48,7 +48,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Activate Python virtual environment
-source ./venv/bin/activate
+. ./venv/bin/activate
 if [ $? -ne 0 ]; then
     echo "{\"status\":\"failed\""
     echo ",\"message\":\"Could not activate virtual env\"}"

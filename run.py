@@ -1,5 +1,5 @@
 from restservice import create_app
-from restservice.config import HOST, PORT
+#from restservice.config import HOST, PORT
 
 DHCP_APP = create_app()
 #DHCP_APP.run(host=HOST, port=PORT)
