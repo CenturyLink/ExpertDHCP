@@ -33,7 +33,7 @@ This user will be called "expertdhcp" and will have no login shell.
 
 **Linux**
 ```
-sudo useradd -m -s /sbin/nologin expertdhcp
+sudo useradd -m -s /bin/sh expertdhcp
 ```
 
 **FreeBSD**
