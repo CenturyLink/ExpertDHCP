@@ -1,0 +1,354 @@
+{
+  "apiGroups": {
+    "dhcpManager": [
+      "API_MGR_CHK_SERVER",
+      "API_MGR_GET_KEA_CONFIG",
+      "API_MGR_GET_IP_FROM_MAC",
+      "API_MGR_ADD_SUBNET",
+      "API_MGR_MOD_SUBNET",
+      "API_MGR_DEL_SUBNET",
+      "API_MGR_ADD_SUBNET_OPTION",
+      "API_MGR_DEL_SUBNET_OPTION",
+      "API_MGR_GET_RESERVATIONS",
+      "API_MGR_ADD_RESERVATION",
+      "API_MGR_DEL_RESERVATION",
+      "API_MGR_ADD_OPTION_RESERVATION",
+      "API_MGR_DEL_OPTION_RESERVATION",
+      "API_MGR_GET_LEASES",
+      "API_MGR_ADD_LEASE",
+      "API_MGR_MOD_LEASE",
+      "API_MGR_DEL_LEASE",
+      "API_MGR_WIP_LEASE",
+      "API_MGR_ADD_CLASS",
+      "API_MGR_MOD_CLASS",
+      "API_MGR_DEL_CLASS"
+    ],
+    "dhcpMonitor": [
+      "API_MON_CHK_ENDPOINT",
+      "API_MON_GET_TRIGGER_STATUS",
+      "API_MON_TRIGGER_COLLECTION",
+      "API_MON_GET_ROWS",
+      "API_MON_GET_ROW_COUNT",
+      "API_MON_STOP_COLLECTION"
+    ],
+    "dhcpAuth": [
+      "API_AUTH_ADD_USER",
+      "API_AUTH_VALIDATE_USER",
+      "API_AUTH_GET_USER_DETAILS"
+    ],
+    "rawApis": [
+      "API_MGR_GET_KEA_CONFIG",
+      "API_MGR_GET_IP_FROM_MAC",
+      "API_MGR_ADD_SUBNET",
+      "API_MGR_MOD_SUBNET",
+      "API_MGR_DEL_SUBNET",
+      "API_MGR_ADD_SUBNET_OPTION",
+      "API_MGR_DEL_SUBNET_OPTION",
+      "API_MGR_GET_RESERVATIONS",
+      "API_MGR_ADD_RESERVATION",
+      "API_MGR_DEL_RESERVATION",
+      "API_MGR_ADD_OPTION_RESERVATION",
+      "API_MGR_DEL_OPTION_RESERVATION",
+      "API_MGR_GET_LEASES",
+      "API_MGR_ADD_LEASE",
+      "API_MGR_MOD_LEASE",
+      "API_MGR_DEL_LEASE",
+      "API_MGR_WIP_LEASE",
+      "API_MGR_ADD_CLASS",
+      "API_MGR_MOD_CLASS",
+      "API_MGR_DEL_CLASS",
+      "API_MON_GET_TRIGGER_STATUS",
+      "API_MON_TRIGGER_COLLECTION",
+      "API_MON_GET_ROWS",
+      "API_MON_GET_ROW_COUNT",
+      "API_MON_STOP_COLLECTION"
+    ]
+  },
+
+  "apis": [
+    {
+      "id": "API_MGR_CHK_SERVER",
+      "text": "Server Check",
+      "endpoint": "/dhcp4/",
+      "method": "GET",
+      "desc": "Xhecks if DHCP server is working"
+    },
+    {
+      "id": "API_MGR_GET_TOKEN",
+      "text": "Get auth token",
+      "endpoint": "/dhcp4/token",
+      "method": "POST",
+      "desc": "Get token from kea server"
+    },
+    {
+      "id": "API_MGR_GET_KEA_CONFIG",
+      "text": "Get KEA Config",
+      "endpoint": "/dhcp4/config",
+      "method": "GET",
+      "desc": "HTTP GET function to fetch the KEA configuration from DHCP server."
+    },
+    {
+      "id": "API_MGR_GET_IP_FROM_MAC",
+      "text": "Get IP from MAC",
+      "endpoint": "/dhcp4/getipfrommac",
+      "method": "POST",
+      "desc": "HTTP GET function to fetch the IP address for mentioned MAC and Subnet in the JSON request parameters"
+    },
+    {
+      "id": "API_MGR_ADD_SUBNET",
+      "text": "Add Subnet",
+      "endpoint": "/dhcp4/subnets/add",
+      "method": "POST",
+      "desc": "A HTTP POST function to add a Subnet."
+    },
+    {
+      "id": "API_MGR_MOD_SUBNET",
+      "text": "Modify Subnet",
+      "endpoint": "/dhcp4/subnets/modify",
+      "method": "POST",
+      "desc": "A HTTP POST function to modify a subnet."
+    },
+    {
+      "id": "API_MGR_DEL_SUBNET",
+      "text": "Delete Subnet",
+      "endpoint": "/dhcp4/subnets/delete",
+      "method": "POST",
+      "desc": "A HTTP POST function to delete a Subnet."
+    },
+
+    {
+      "id": "API_MGR_ADD_SUBNET_OPTION",
+      "text": "Add Subnet Option",
+      "endpoint": "/dhcp4/subnets/options/add",
+      "method": "POST",
+      "desc": "A HTTP POST function to add option data in Subnet."
+    },
+    {
+      "id": "API_MGR_DEL_SUBNET_OPTION",
+      "text": "Delete Option",
+      "endpoint": "/dhcp4/subnets/options/delete",
+      "method": "POST",
+      "desc": "A HTTP POST function to delete option data in Subnet."
+    },
+    {
+      "id": "API_MGR_GET_RESERVATIONS",
+      "text": "Fetch Reservations",
+      "endpoint": "/dhcp4/reservations",
+      "method": "POST",
+      "desc": "A HTTP GET function to fetch the reservations within a Subnet from KEA server."
+    },
+    {
+      "id": "API_MGR_ADD_RESERVATION",
+      "text": "Add New Reservation",
+      "endpoint": "/dhcp4/reservations/add",
+      "method": "POST",
+      "desc": "A HTTP POST function to add new Reservations to Subnet."
+    },
+    {
+      "id": "API_MGR_DEL_RESERVATION",
+      "text": "Delete Reservation",
+      "endpoint": "/dhcp4/reservations/delete",
+      "method": "POST",
+      "desc": "A HTTP POST function to delete reservations from Subnet."
+    },
+    {
+      "id": "API_MGR_ADD_OPTION_RESERVATION",
+      "text": "Add Option Reservation",
+      "endpoint": "/dhcp4/subnets/reservation/options/add",
+      "method": "POST",
+      "desc": "A HTTP POST function to add options to reservations in Subnet."
+    },
+    {
+      "id": "API_MGR_DEL_OPTION_RESERVATION",
+      "text": "Delete Option Reservation",
+      "endpoint": "/dhcp4/subnets/reservation/options/delete",
+      "method": "POST",
+      "desc": "A HTTP POST function to delete option data in reservations for a Subnet."
+    },
+    {
+      "id": "API_MGR_GET_LEASES",
+      "text": "Get Leases",
+      "endpoint": "/dhcp4/leases",
+      "method": "GET",
+      "desc": "HTTP GET function to fetch leases."
+    },
+    {
+      "id": "API_MGR_ADD_LEASE",
+      "text": "Add New Lease",
+      "endpoint": "/dhcp4/lease/add",
+      "method": "POST",
+      "desc": "HTTP POST function to add a new lease."
+    },
+    {
+      "id": "API_MGR_MOD_LEASE",
+      "text": "Update Lease",
+      "endpoint": "/dhcp4/lease/update",
+      "method": "POST",
+      "desc": "HTTP POST function to update a lease."
+    },
+    {
+      "id": "API_MGR_DEL_LEASE",
+      "text": "Delete Lease",
+      "endpoint": "/dhcp4/lease/delete",
+      "method": "POST",
+      "desc": "HTTP POST function to delete a lease."
+    },
+    {
+      "id": "API_MGR_WIP_LEASE",
+      "text": "Wipe All Leases",
+      "endpoint": "/dhcp4/lease/wipe",
+      "method": "POST",
+      "desc": "HTTP POST function to delete all leases for a subnet."
+    },
+    {
+      "id": "API_MGR_ADD_CLASS",
+      "text": "Add Client Class",
+      "endpoint": "/dhcp4/classes/add",
+      "method": "POST",
+      "desc": "HTTP POST function to add a new client class."
+    },
+    {
+      "id": "API_MGR_MOD_CLASS",
+      "text": "Modify Client Class",
+      "endpoint": "/dhcp4/classes/modify",
+      "method": "POST",
+      "desc": "HTTP POST function to modify client class."
+    },
+    {
+      "id": "API_MGR_DEL_CLASS",
+      "text": "Delete Client Class",
+      "endpoint": "/dhcp4/classes/delete",
+      "method": "POST",
+      "desc": "HTTP POST function to delete a client class."
+    },
+    {
+      "id": "API_MGR_DEL_CLASS",
+      "text": "Delete Client Class",
+      "endpoint": "/dhcp4/classes/delete",
+      "method": "POST",
+      "desc": "HTTP POST function to delete a client class."
+    },
+    {
+      "id": "API_MON_CHK_ENDPOINT",
+      "text": "Monitor Endpoint check",
+      "endpoint": "/monitor/",
+      "method": "GET",
+      "desc": "HTTP GET function to check monitor status."
+    },
+    {
+      "id": "API_MON_GET_TRIGGER_STATUS",
+      "text": "Get Trigger Status",
+      "endpoint": "/monitor/status",
+      "method": "GET",
+      "desc": "HTTP GET function to see the dump collection is triggered or not."
+    },
+    {
+      "id": "API_MON_TRIGGER_COLLECTION",
+      "text": "Trigger Dump Collection",
+      "endpoint": "/monitor/trigger",
+      "method": "GET",
+      "desc": "HTTP GET function to trigger dump collection."
+    },
+    {
+      "id": "API_MON_GET_ROWS",
+      "text": "Get Collected Packets",
+      "endpoint": "/monitor/get_rows",
+      "method": "POST",
+      "desc": "HTTP POST function to get rows."
+    },
+    {
+      "id": "API_MON_GET_ROW_COUNT",
+      "text": "Get Row Count",
+      "endpoint": "/monitor/row_count",
+      "method": "GET",
+      "desc": "HTTP GET function to get rows."
+    },
+    {
+      "id": "API_MON_STOP_COLLECTION",
+      "text": "Terminate Packet Collection",
+      "endpoint": "/monitor/terminate",
+      "method": "GET",
+      "desc": "HTTP GET function to terminate dump collection."
+    },
+    {
+      "id": "API_AUTH_ADD_USER",
+      "text": "Add New User",
+      "endpoint": "/auth/adduser",
+      "method": "POST",
+      "desc": "HTTP POST function to add a new user."
+    },
+    {
+      "id": "API_AUTH_VALIDATE_USER",
+      "text": "Validate User",
+      "endpoint": "/auth/auth",
+      "method": "POST",
+      "desc": "HTTP POST function to validate user credentials."
+    },
+    {
+      "id": "API_GET_AUTH_TOKENS",
+      "text": "get Auth tokens for all active servers",
+      "endpoint": "/auth/get_auth_tokens",
+      "method": "POST",
+      "desc": "HTTP POST to get tokens for each server."
+    },
+    {
+      "id": "API_AUTH_LOGIN",
+      "text": "Login User",
+      "endpoint": "/auth/login",
+      "method": "POST",
+      "desc": "HTTP POST function to validate login."
+    },
+    {
+      "id": "API_AUTH_GET_USER_DETAILS",
+      "text": "Get user details",
+      "endpoint": "/auth/getuser",
+      "method": "POST",
+      "desc": "HTTP POST function to get user details."
+    },
+    {
+      "id": "API_MAC_VENDORS",
+      "text": "Get MAC Vendors",
+      "endpoint": "/auth/vendor_lookup",
+      "method": "POST",
+      "desc": "HTTP POST function to get mac vendors."
+    },
+    {
+      "id": "API_CHK_SERVERS",
+      "text": "Servers Check",
+      "endpoint": "/auth/servers_status",
+      "method": "POST",
+      "desc": "Checks if List of DHCP servers are working"
+    }
+  ],
+  "masterConfigPath": "./conf",
+  "configFileName": "config.json",
+  "apiKeysFileName": "apikeys.json",
+  "usersCsvFileName": "users.csv",
+  "localStorageServerId": "dhcpServer",
+  "localStorageLabId": "lab",
+  "localStorageSessionToken": "session-token",
+  "localStorageAuthToken": "auth-tokens",
+  "apiKeyAdminRole": "admin",
+  "apiKeyNonAdminRole": "user",
+  "colorPalette": "PALETTE_002",
+  "dhcpDumpColumnDef": [
+    [0, 140],
+    [1, 200],
+    [16, 400],
+    [17, 500],
+    [2, 120],
+    [3, 90],
+    [4, 40],
+    [5, 40],
+    [6, 80],
+    [7, 40],
+    [8, 40],
+    [9, 40],
+    [10, 40],
+    [11, 40],
+    [12, 40],
+    [13, 40],
+    [14, 40],
+    [15, 40]
+  ]
+}

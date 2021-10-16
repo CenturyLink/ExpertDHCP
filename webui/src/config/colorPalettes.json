@@ -1,0 +1,73 @@
+{
+  "colorPalettes": [
+    {
+      "id": "PALETTE_001",
+      "themeColor#1": "#222831",
+      "themeColor#2": "#3fc1c9",
+      "themeColor#3": "#00adb5",
+      "loginPage": { "background": "#3fc1c9", "text": "#3fc1c9" },
+      "positiveBtn": "#364f6b",
+      "negativeBtn": "#f30511",
+      "primaryBtn": "blue",
+      "dashboard": {
+        "overviewLabel": "red",
+        "overview": {
+          "subnets": "grey",
+          "total": "black",
+          "allocated": "red",
+          "available": "teal"
+        },
+        "leasesLabel": "teal",
+        "leases": {
+          "total": "black",
+          "allocated": "red",
+          "available": "teal"
+        },
+        "topVendorsLabel": "teal",
+        "vendorChartLabel": "grey",
+        "positiveBtn": "teal",
+        "negativeBtn": "red",
+        "primaryBtn": "blue"
+      }
+    },
+    {
+      "id": "PALETTE_002",
+      "themeColor#1": "#364f6b",
+      "themeColor#2": "#3fc1c9",
+      "themeColor#3": "#f5f5f5",
+      "loginPage": { "background": "grey", "text": "#f5f5f5" },
+      "positiveBtn": "#364f6b",
+      "negativeBtn": "#f30511",
+      "primaryBtn": "blue",
+      "dashboard": {
+        "overviewLabel": "#364f6b",
+        "overview": {
+          "subnets": "grey",
+          "total": "green",
+          "allocated": "red",
+          "available": "teal"
+        },
+        "leasesLabel": "#364f6b",
+        "leases": {
+          "total": "#364f6b",
+          "allocated": "red",
+          "available": "teal"
+        },
+        "topVendorsLabel": "#364f6b",
+        "vendorChartLabel": "#364f6b",
+        "dhcpServersLabel": "red"
+      }
+    }
+  ],
+  "VendorChart": [
+    "#364f6b",
+    "#3fc1c9",
+    "#faf0af",
+    "#fc5185",
+    "red",
+    "olive",
+    "brown",
+    "yellow",
+    "blue"
+  ]
+}

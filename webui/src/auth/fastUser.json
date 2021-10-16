@@ -1,0 +1,11 @@
+{
+  "uuid": "",
+  "username": "",
+  "password": "",
+  "permissions": {
+    "172.28.12.132": {
+      "adminServiceCodes": ["900"],
+      "nonAdminServiceCodes": ["100"]
+    }
+  }
+}

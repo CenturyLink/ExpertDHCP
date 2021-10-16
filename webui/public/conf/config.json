@@ -1,0 +1,76 @@
+{
+  "useCsvAuthForMaster": true,
+  "defaults": { "lab": "LAB001", "server": "KEA001" },
+  "labs": [
+    {
+      "id": "LAB001",
+      "location": "Denver",
+      "value": "lab1",
+      "servers": [
+        {
+          "id": "KEA001",
+          "title": "multiserver1631",
+          "ip": "172.28.12.132",
+          "dhcpManagerPort": "5007",
+          "dhcpMonitorPort": "5555"
+        },
+        {
+          "id": "KEA002",
+          "title": "virtz-kea-dhcp01",
+          "ip": "10.189.134.56",
+          "dhcpManagerPort": "5007",
+          "dhcpMonitorPort": "5555"
+        }
+      ]
+    },
+    {
+      "id": "LAB002",
+      "location": "Bangalore",
+      "value": "lab2",
+      "servers": [
+        {
+          "id": "DUMMY001",
+          "title": "Dummy",
+          "ip": "10.189.11.11",
+          "dhcpManagerPort": "5007",
+          "dhcpMonitorPort": "5555"
+        },
+        {
+          "id": "DUMMY002",
+          "title": "Dummy",
+          "ip": "10.189.11.12",
+          "dhcpManagerPort": "5007",
+          "dhcpMonitorPort": "5555"
+        },
+        {
+          "id": "DUMMY003",
+          "title": "Dummy",
+          "ip": "10.189.11.13",
+          "dhcpManagerPort": "5007",
+          "dhcpMonitorPort": "5555"
+        },
+        {
+          "id": "DUMMY004",
+          "title": "Dummy",
+          "ip": "10.189.11.14",
+          "dhcpManagerPort": "5007",
+          "dhcpMonitorPort": "5555"
+        }
+      ]
+    },
+    {
+      "id": "LAB003",
+      "location": "Noida",
+      "value": "lab3",
+      "servers": [
+        {
+          "id": "DUMMY005",
+          "title": "Dummy",
+          "ip": "10.189.11.15",
+          "dhcpManagerPort": "5007",
+          "dhcpMonitorPort": "5555"
+        }
+      ]
+    }
+  ]
+}

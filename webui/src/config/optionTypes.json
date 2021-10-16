@@ -1,0 +1,604 @@
+{
+  "optionTypes": {
+    "2": {
+      "Name": "time-offset",
+      "Type": "int32",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "3": {
+      "Name": "routers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": true
+    },
+    "4": {
+      "Name": "time-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "5": {
+      "Name": "name-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "6": {
+      "Name": "domain-name-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": true
+    },
+    "7": {
+      "Name": "log-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "8": {
+      "Name": "cookie-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "9": {
+      "Name": "lpr-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "10": {
+      "Name": "impress-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "11": {
+      "Name": "resource-location-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "13": {
+      "Name": "boot-size",
+      "Type": "uint16",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "14": {
+      "Name": "merit-dump",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "15": {
+      "Name": "domain-name",
+      "Type": "fqdn",
+      "Array?": false,
+      "Returned if not requested?": true
+    },
+    "16": {
+      "Name": "swap-server",
+      "Type": "ipv4-address",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "17": {
+      "Name": "root-path",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "18": {
+      "Name": "extensions-path",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "19": {
+      "Name": "ip-forwarding",
+      "Type": "boolean",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "20": {
+      "Name": "non-local-source-routing",
+      "Type": "boolean",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "21": {
+      "Name": "policy-filter",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "22": {
+      "Name": "max-dgram-reassembly",
+      "Type": "uint16",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "23": {
+      "Name": "default-ip-ttl",
+      "Type": "uint8",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "24": {
+      "Name": "path-mtu-aging-timeout",
+      "Type": "uint32",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "25": {
+      "Name": "path-mtu-plateau-table",
+      "Type": "uint16",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "26": {
+      "Name": "interface-mtu",
+      "Type": "uint16",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "27": {
+      "Name": "all-subnets-local",
+      "Type": "boolean",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "28": {
+      "Name": "broadcast-address",
+      "Type": "ipv4-address",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "29": {
+      "Name": "perform-mask-discovery",
+      "Type": "boolean",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "30": {
+      "Name": "mask-supplier",
+      "Type": "boolean",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "31": {
+      "Name": "router-discovery",
+      "Type": "boolean",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "32": {
+      "Name": "router-solicitation-address",
+      "Type": "ipv4-address",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "33": {
+      "Name": "static-routes",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "34": {
+      "Name": "trailer-encapsulation",
+      "Type": "boolean",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "35": {
+      "Name": "arp-cache-timeout",
+      "Type": "uint32",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "36": {
+      "Name": "ieee802-3-encapsulation",
+      "Type": "boolean",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "37": {
+      "Name": "default-tcp-ttl",
+      "Type": "uint8",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "38": {
+      "Name": "tcp-keepalive-interval",
+      "Type": "uint32",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "39": {
+      "Name": "tcp-keepalive-garbage",
+      "Type": "boolean",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "40": {
+      "Name": "nis-domain",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "41": {
+      "Name": "nis-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "42": {
+      "Name": "ntp-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "43": {
+      "Name": "vendor-encapsulated-options",
+      "Type": "empty",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "44": {
+      "Name": "netbios-name-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "45": {
+      "Name": "netbios-dd-server",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "46": {
+      "Name": "netbios-node-type",
+      "Type": "uint8",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "47": {
+      "Name": "netbios-scope",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "48": {
+      "Name": "font-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "49": {
+      "Name": "x-display-manager",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "52": {
+      "Name": "dhcp-option-overload",
+      "Type": "uint8",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "54": {
+      "Name": "dhcp-server-identifier",
+      "Type": "ipv4-address",
+      "Array?": false,
+      "Returned if not requested?": true
+    },
+    "56": {
+      "Name": "dhcp-message",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "57": {
+      "Name": "dhcp-max-message-size",
+      "Type": "uint16",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "60": {
+      "Name": "vendor-class-identifier",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "62": {
+      "Name": "nwip-domain-name",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "63": {
+      "Name": "nwip-suboptions",
+      "Type": "binary",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "64": {
+      "Name": "nisplus-domain-name",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "65": {
+      "Name": "nisplus-servers",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "66": {
+      "Name": "tftp-server-name",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "67": {
+      "Name": "boot-file-name",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "68": {
+      "Name": "mobile-ip-home-agent",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "69": {
+      "Name": "smtp-server",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "70": {
+      "Name": "pop-server",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "71": {
+      "Name": "nntp-server",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "72": {
+      "Name": "www-server",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "73": {
+      "Name": "finger-server",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "74": {
+      "Name": "irc-server",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "75": {
+      "Name": "streettalk-server",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "76": {
+      "Name": "streettalk-directory-assistance-server",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "77": {
+      "Name": "user-class",
+      "Type": "binary",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "78": {
+      "Name": "slp-directory-agent",
+      "Type": "record (boolean, ipv4-address)",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "79": {
+      "Name": "slp-service-scope",
+      "Type": "record (boolean, string)",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "85": {
+      "Name": "nds-server",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "86": {
+      "Name": "nds-tree-name",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "87": {
+      "Name": "nds-context",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "88": {
+      "Name": "bcms-controller-names",
+      "Type": "fqdn",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "89": {
+      "Name": "bcms-controller-address",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "93": {
+      "Name": "client-system",
+      "Type": "uint16",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "94": {
+      "Name": "client-ndi",
+      "Type": "record (uint8, uint8, uint8)",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "97": {
+      "Name": "uuid-guid",
+      "Type": "record (uint8, binary)",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "98": {
+      "Name": "uap-servers",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "99": {
+      "Name": "geoconf-civic",
+      "Type": "binary",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "100": {
+      "Name": "pcode",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "101": {
+      "Name": "tcode",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "112": {
+      "Name": "netinfo-server-address",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "113": {
+      "Name": "netinfo-server-tag",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "114": {
+      "Name": "default-url",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "116": {
+      "Name": "auto-config",
+      "Type": "uint8",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "117": {
+      "Name": "name-service-search",
+      "Type": "uint16",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "118": {
+      "Name": "subnet-selection",
+      "Type": "ipv4-address",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "119": {
+      "Name": "domain-search",
+      "Type": "fqdn",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "124": {
+      "Name": "vivco-suboptions",
+      "Type": "binary",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "125": {
+      "Name": "vivso-suboptions",
+      "Type": "binary",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "136": {
+      "Name": "pana-agent",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "137": {
+      "Name": "v4-lost",
+      "Type": "fqdn",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "138": {
+      "Name": "capwap-ac-v4",
+      "Type": "ipv4-address",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "141": {
+      "Name": "sip-ua-cs-domains",
+      "Type": "fqdn",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "146": {
+      "Name": "rdnss-selection",
+      "Type": "record (uint8, ipv4-address, ipv4-address, fqdn)",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "159": {
+      "Name": "v4-portparams",
+      "Type": "record (uint8, psid)",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "160": {
+      "Name": "v4-captive-portal",
+      "Type": "string",
+      "Array?": false,
+      "Returned if not requested?": false
+    },
+    "212": {
+      "Name": "option-6rd",
+      "Type": "record (uint8, uint8, ipv6-address, ipv4-address)",
+      "Array?": true,
+      "Returned if not requested?": false
+    },
+    "213": {
+      "Name": "v4-access-domain",
+      "Type": "fqdn",
+      "Array?": false,
+      "Returned if not requested?": false
+    }
+  }
+}
