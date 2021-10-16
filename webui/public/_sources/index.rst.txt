@@ -1,4 +1,4 @@
-.. masterdhcp documentation master file, created by
+.. expertdhcp documentation master file, created by
    sphinx-quickstart on Fri Sep 18 06:45:13 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -42,8 +42,8 @@ Installation of Master DHCP involves the following steps;
 
    1. Install fastdhcp on each kea servers user wanted to manage.
    2. setup fast api authentication for each fastdhcp servers.
-   3. setup masterdhcpauth for authenticating master GUI.
-   4. Install masterdhcp frontend GUI.
+   3. setup expertdhcpauth for authenticating master GUI.
+   4. Install expertdhcp frontend GUI.
 
 Prerequisites
 ~~~~~~~~~~~~~~~~~
@@ -509,7 +509,7 @@ To see the installed packages in your virtual environment, run
 Configurations
 """"""""""""""""
 
-This configuration file is present at ./masterdhcpauth/masterdhcpauth/config.ini
+This configuration file is present at ./expertdhcpauth/expertdhcpauth/config.ini
 
 ::
 
@@ -572,7 +572,7 @@ Run using gunicorn via command line
 
 ::
 
-/home/ajeeb/master-dhcp-auth/venv/bin/gunicorn --bind 0.0.0.0:8086 --pid /home/ajeeb/master-dhcp-auth/run/masterdhcpauth.pid --error-logfile "/home/ajeeb/gunicorn/work/masterdhcpauth/log/error.log" --access-logfile "/home/ajeeb/gunicorn/work/masterdhcpauth/log/access.log" --workers=4 --threads=2 run:masterdhcpauth_app
+/home/ajeeb/master-dhcp-auth/venv/bin/gunicorn --bind 0.0.0.0:8086 --pid /home/ajeeb/master-dhcp-auth/run/expertdhcpauth.pid --error-logfile "/home/ajeeb/gunicorn/work/expertdhcpauth/log/error.log" --access-logfile "/home/ajeeb/gunicorn/work/expertdhcpauth/log/access.log" --workers=4 --threads=2 run:expertdhcpauth_app
 
 
 Running as a supervisord service with gunicorn thread
@@ -582,13 +582,13 @@ Copy fastlibvirt.ini to the path as below
 
 ::
 
-    cp ./deploy/supervisord/masterdhcpauth.ini /etc/supervisord.d/masterdhcpauth.ini
+    cp ./deploy/supervisord/expertdhcpauth.ini /etc/supervisord.d/expertdhcpauth.ini
 
 Make the fastlibvirt_start script executable.
 
 ::
 
-    chmod +x ./deploy/supervisord/masterdhcpauth_start
+    chmod +x ./deploy/supervisord/expertdhcpauth_start
 
 since we made changes to the configs, update supervisord configs.
 
@@ -775,7 +775,7 @@ Copy the ini file to supervisord folder
 
 ::
 
-    sudo cp ./deploy/supervisord/masterdhcpui.ini /etc/supervisord.d/
+    sudo cp ./deploy/supervisord/expertdhcpui.ini /etc/supervisord.d/
 
 Since we made changes to the configs, update supervisord configs.
 
@@ -793,7 +793,7 @@ Check status of service.
 
 ::
 
-    sudo  supervisorctl status masterdhcpui
+    sudo  supervisorctl status expertdhcpui
 
 
 To check status of all services
@@ -806,7 +806,7 @@ To check status of all services
 Master DHCP Auth Endpoints
 ----------------------------
 
-MASTERDHCPAUTH is the backend authentication server for masterdhcp frontend.
+MASTERDHCPAUTH is the backend authentication server for expertdhcp frontend.
 
 
 001 Get User Session
@@ -923,7 +923,7 @@ API Information
     +---------------------------------+--------------------------------------------------------------------+
     | **Function**                    | endpoints.authenticate()                                           |
     +---------------------------------+--------------------------------------------------------------------+
-    | **Description**                 | Authenticate masterdhcp using username and password                |
+    | **Description**                 | Authenticate expertdhcp using username and password                |
     +---------------------------------+--------------------------------------------------------------------+
     | **HTTP Method**                 | POST                                                               |
     +---------------------------------+--------------------------------------------------------------------+
