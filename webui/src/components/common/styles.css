@@ -1,0 +1,63 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+.modal.fade.show {
+  display: block;
+  padding-right: 16px;
+}
+
+.Modal {
+  position: absolute;
+  top: 40px;
+  bottom: 40px;
+  background-color: gray;
+  width: 100%;
+}
+
+.Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: gray;
+}
+
+@media (min-width: 768px) {
+  .Modal {
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    background-color: green;
+    width: 80%;
+  }
+
+  .Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: green;
+  }
+}
+
+@media (min-width: 900px) {
+  .Modal {
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    background-color: yellow;
+    width: 200px;
+  }
+
+  .Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: yellow;
+  }
+}

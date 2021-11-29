@@ -1,0 +1,81 @@
+{
+  "subnetTemplate": {
+    "4o6-interface": "",
+    "4o6-interface-id": "",
+    "4o6-subnet": "",
+    "boot-file-name": "",
+    "id": -1,
+    "match-client-id": true,
+    "next-server": "0.0.0.0",
+    "option-data": [],
+    "pools": [],
+    "rebind-timer": 1800,
+    "relay": { "ip-addresses": [] },
+    "renew-timer": 900,
+    "reservation-mode": "all",
+    "reservations": [],
+    "server-hostname": "",
+    "subnet": "",
+    "valid-lifetime": 3600
+  },
+  "optionData": {
+    "always-send": false,
+    "code": -1,
+    "csv-format": true,
+    "data": "",
+    "name": "",
+    "space": "dhcp4"
+  },
+  "optionDef": {
+    "array": false,
+    "code": -1,
+    "encapsulate": "",
+    "name": "",
+    "record-types": "",
+    "space": "dhcp4",
+    "type": "empty"
+  },
+  "pools": {
+    "option-data": [],
+    "pool": ""
+  },
+  "reservations": {
+    "boot-file-name": "",
+    "client-classes": [],
+    "hostname": "",
+    "hw-address": "",
+    "ip-address": "",
+    "next-server": "",
+    "option-data": [],
+    "server-hostname": ""
+  },
+  "clientClassTemplate": {
+    "boot-file-name": "",
+    "name": "",
+    "next-server": "0.0.0.0",
+    "option-data": [],
+    "option-def": [],
+    "server-hostname": ""
+  },
+  "leasesTemplate": {
+    "client-id": "",
+    "cltt": -1,
+    "fqdn-fwd": false,
+    "fqdn-rev": false,
+    "hostname": "",
+    "hw-address": "",
+    "ip-address": "",
+    "state": 0,
+    "subnet-id": -1,
+    "valid-lft": 7200
+  },
+  "mandatoryFields": {
+    "subnet": ["subnet"],
+    "relay": [],
+    "option-data": ["name", "data"],
+    "pools": ["pool"],
+    "reservations": ["hw-address"],
+    "client-class": [],
+    "lease": ["ip-address", "subnet-id", "hw-address"]
+  }
+}

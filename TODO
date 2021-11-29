@@ -1,0 +1,4 @@
+- Add IPv6 handling
+- Add Git backups
+- Add dump/log facility
+- Fix expertDHCP logging issue. If the log file is changed to /var/log/expertdhcp

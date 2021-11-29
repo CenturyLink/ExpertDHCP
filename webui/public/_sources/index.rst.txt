@@ -1,0 +1,1704 @@
+.. expertdhcp documentation master file, created by
+   sphinx-quickstart on Fri Sep 18 06:45:13 2020.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+
+Documentation
+===========================
+
+**Authors**: Ajeeb Basheer
+
+**Last Updated**: 15th Sept 2020
+
+.. contents:: Table Of Contents
+
+
+Introduction
+-------------
+
+Master DHCP is a platform for managing and monitoring multiple DHCP servers.
+
+Architecture
+--------------
+
+Master DHCP consists of the following components:
+
+1. GUI - This is the user interface for managing and monitoring Kea servers.
+2. Master DHCP Auth - Authentication server for Master DHCP GUI.
+3. Kea DHCP Servers - Master DHCP can handle multiple Kea Servers at a time. FAST DHCP and DHCP Monitor need to be installed on each Kea servers. Also, each FAST DHCP server should be equipped with FAST API AUTH to ensure secure communication between GUI and Kea servers.
+4. Authentication Database: This could be a centralized Mongo DB or CSV Based database.
+
+Below shows the architecture of Master DHCP with two Kea servers. This set up uses MongoDB as the authentication database.
+
+.. image:: architecture.png
+  :width: 600
+  :alt: Alternative text
+
+Installation
+--------------
+
+Installation of Master DHCP involves the following steps;
+
+   1. Install fastdhcp on each kea servers user wanted to manage.
+   2. setup fast api authentication for each fastdhcp servers.
+   3. setup expertdhcpauth for authenticating master GUI.
+   4. Install expertdhcp frontend GUI.
+
+Prerequisites
+~~~~~~~~~~~~~~~~~
+
+Git
+"""""
+
+Type ``git`` command to verify git is installed on your machine.
+
+::
+
+    git --version
+
+Python3.6
+""""""""""""""
+
+This project requires python 3.6 or above installed on your machine.
+Type ``python3`` commands to verify the version installed.
+
+::
+
+    python3 --version
+
+Pip3
+"""""
+
+Pip is the package installer for Python. Type ``pip3`` command to verify the version installed.
+
+::
+
+    pip3 --version
+
+Node.js
+""""""""
+
+Node.js is an open-source cross-platform JavaScript (JS) runtime environment.
+To verify whether node is installed or not,
+
+::
+
+    node --version
+
+Npm
+"""""
+
+Node Package Manager (npm) is Node’s official package manager, used for installing and managing package dependencies. To verify whether npm is installed or not,
+
+::
+
+    npm --version
+
+Setup Users [MongoDB]
+""""""""""""""""""""""
+
+This section is applicable only when MongoDB is used for authentication.
+
+Preferably, Master DHCP requires two db users.
+
+        1. A Read-Write user for fast authentication.
+        2. A Read-Only user for master DHCP.
+
+To create these users, we need to have an admin user with "userAdmin" privileges.
+
+To check the previlages of a admin user,
+
+1. login to the Mongo Shell.
+
+::
+
+     mongo "mongodb://<adminuser>:<password>@mongodb0.example.net:27017,mongodb1.example.net:27017,mongodb2.example.net:27017/?authSource=admin&replicaSet=rs-dev"
+
+
+2. select the admin database.
+
+::
+
+     use admin
+
+3. Display users and verify the user has "userAdmin"/"userAdminAnyDatabase" roles.
+
+::
+
+    show users
+        OR
+    db.getUsers()
+
+
+
+
+Create Read-Write user for fast authentication
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. login to the Mongo Shell.
+
+::
+
+     mongo "mongodb://<adminuser>:<password>@mongodb0.example.net:27017,mongodb1.example.net:27017,mongodb2.example.net:27017/?authSource=admin&replicaSet=rs-dev"
+
+2. select the admin database.
+
+::
+
+     use admin
+
+3. Create a user.
+
+::
+
+	db.createUser({user:'fastAuthUser', pwd: '<>', roles: ['readWrite', 'readWriteAnyDatabase']})
+
+::
+
+	Successfully added
+        user: {
+           "user" : "fastAuthUser",
+           "roles" : [
+                "readWrite",
+                "readWriteAnyDatabase"
+        ]
+	}
+
+4. We can grant new roles later aswell using grantRolesToUser,
+
+::
+
+     db.grantRolesToUser("fastAuthUser", ["readWriteAnyDatabase"])
+
+
+Create Read-Only user for master DHCP
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+1. login to the Mongo Shell.
+
+::
+
+     mongo "mongodb://<adminuser>:<password>@mongodb0.example.net:27017,mongodb1.example.net:27017,mongodb2.example.net:27017/?authSource=admin&replicaSet=rs-dev"
+
+2. select the admin database.
+
+::
+
+     use admin
+
+
+3. Create a user.
+
+::
+
+	db.createUser({user:'fastAuthUser-RO', pwd: '<>', roles: ['read', 'readAnyDatabase']})
+
+::
+
+	Successfully added
+        user: {
+           "user" : "fastAuthUser-RO",
+           "roles" : [
+                "read",
+                "readAnyDatabase"
+           ]
+
+	}
+
+4. We can grant new roles later aswell using grantRolesToUser,
+
+::
+
+     db.grantRolesToUser("fastAuthUser-RO", ["readAnyDatabase"])
+
+
+Install Kea DHCP Server
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Kea is the next generation of DHCP software developed by ISC. It supports both DHCPv4 and DHCPv6 protocols along with their extensions, e.g. prefix delegation and dynamic updates to DNS.
+
+This section covers only the required documentation for Kea Server Installation on CentOS-7. For detailed documentation, refer the following link.
+
+::
+
+   https://kea.readthedocs.io/en/kea-1.6.2/arm/install.html
+
+
+Retrieve from Git
+"""""""""""""""""""
+
+The code can be checked out from https://gitlab.isc.org/isc-projects/kea.git:
+
+::
+
+   git clone https://gitlab.isc.org/isc-projects/kea.git
+
+
+Create configuration scripts
+"""""""""""""""""""""""""""""""
+
+The code checked out from the git repository does not include the generated configure script, the Makefile.in files, nor their related build files.
+They can be created by running autoreconf with the --install switch. This will run autoconf, aclocal, libtoolize, autoheader, automake, and related commands.
+
+move to root directory where configure.ac is present.
+
+::
+
+   $ cd kea/
+
+::
+
+   $ autoreconf --install
+
+
+Configure Before the Build
+""""""""""""""""""""""""""""
+
+Kea uses the GNU Build System to discover build environment details.
+
+
+Run ./configure with the --help switch to view the different options.
+
+::
+
+   $ ./configure --help
+
+
+
+To generate the makefiles using the defaults, simply run:
+
+::
+
+   $ ./configure
+
+
+If configure fails, it may be due to missing or old dependencies.
+
+If configure succeeds, it displays a report with the parameters used to build the code. This report is saved into the
+file config.report and is also embedded into the executable binaries, e.g., kea-dhcp4.
+
+
+Now you can type "make" to build Kea. Note that if you intend to run "make check", you must run "make" first as some
+files need to be generated by "make" before "make check" can be run.
+
+When running "make install" do not use any form of parallel or job server options (such as GNU make's -j option).
+Doing so may cause errors.
+
+Build
+""""""
+
+After the configure step is complete, build the executables from the C++ code and prepare the Python scripts by
+running the command:
+
+::
+
+   $ make
+
+Install
+""""""""
+
+To install the Kea executables, support files, and documentation, issue the command:
+
+::
+
+   $ make install
+
+
+Install Fast DHCP
+~~~~~~~~~~~~~~~~~~
+Refer Fast DHCP documentation.
+
+Setup FAST Authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section will only cover configurations required for master DHCP.
+Refer FAST API Auth documentation for more information regarding fast authentication.
+
+Configurations
+""""""""""""""""
+
+Config file for fast authentication is present at */fastdhcp/fast_api_auth/conf/*.
+
+Open the configuration file.
+
+::
+
+     vi /fastdhcp/fast_api_auth/conf/config.ini
+
+Under [AUTHENTICATION], set the following fields.
+
+::
+
+    USE_MONGODB=To use Mongo DB as a database for user management.
+    USE_CSV=To use a csv as a database for user management.
+    USE_REPLICA_SET=True
+    MONGODB_HOST=IP:PORT format for mongodb. if replica set, put comma seperated.
+    MONGODB_USERNAME=<Read-Write username>
+    MONGODB_RS=REPLICA SET Name if using replica sets.
+    MONGODB_DB_NAME=Database name
+    COLLECTION_NAME=Collection name.
+    SECRET_DIR=Directory name to store secret file
+    SECRET_KEY_FILE_NAME=Secret file name
+
+Set up fast api authentication secrets
+""""""""""""""""""""""""""""""""""""""""
+
+Inorder to do any operation, we need to setup an ADMIN secret key.
+
+To create a new admin key and Mongo Password, run the command from root folder. If USE_MONGODB=true, the setup command will prompt for the mongodb read-write user's password as well.
+
+::
+
+    $ python3 -m fast_api_auth.setup
+
+If the secrets already exists, below error will be thrown. In such cases, delete the SECRET_KEY_FILE_NAME first and try again.
+::
+
+    Exception('A SECRET key already exists',)
+
+    $ rm fast_api_auth/<SECRET_DIR>/<SECRET_KEY_FILE_NAME>
+
+Now, try again,
+
+::
+
+    $ python3 -m fast_api_auth.setup
+
+    Enter Admin SECRET Key:
+    Enter MONGODB Password: <Read-Write user password created>
+
+Mongo Based Authentication
+"""""""""""""""""""""""""""
+
+Add a new user
+^^^^^^^^^^^^^^^
+
+To add a new user in fastAuthentication database, type the below command;
+
+::
+
+    $ python3 -m fast_api_auth.app --add-user -u <username> --admin-code 900.200 --non-admin-code 300
+
+    Enter valid Admin Key: <enter secret admin key>
+    Enter new password:
+    Confirm new password:
+
+This will create a new user in fast authentication database.
+
+::
+
+    {
+    "_id": {
+        "$oid": "5f60418240d9ab65a24ab6"
+    },
+    "uuid": "43ae154d-38c5-44cf-8fa3-34c6cac33a6e",
+    "username": "<user>",
+    "password": "pbkdf2:sha256:150000$xxxxxxxxxxxxxxxxx",
+    "permissions": [{
+        "serverIp": "172.28.12.132",
+        "adminServiceCodes": ["900", "200"],
+        "nonAdminServiceCodes": ["300"]
+    }]
+    }
+
+Add permissions for a server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To add a new server in permissions, run the below command from that server.
+
+::
+
+    python3 -m fast_api_auth.app --change-perm -u <username> --add --admin-code 900.200 --non-admin-code 300
+
+This will change the above user as follows;
+
+::
+
+    {
+        "_id": {
+        "$oid": "5f60418240d9ab65a24a4bb6"
+        },
+        "uuid": "43ae154d-38c5-44cf-8fa3-34c6cac33a6e",
+        "username": "<username>",
+        "password": "pbkdf2:sha256:150000$xxxxxxxxxxxxxxxxx"
+        "permissions": [{
+            "serverIp": "172.28.12.132",
+            "adminServiceCodes": ["900", "200"],
+            "nonAdminServiceCodes": ["300"]
+        }, {
+            "serverIp": "10.189.134.56",
+            "adminServiceCodes": ["200", "900"],
+            "nonAdminServiceCodes": ["300"]
+        }]
+    }
+
+CSV Based Based Authentication
+"""""""""""""""""""""""""""""""
+
+Add a user
+^^^^^^^^^^^
+
+To add a new user to CSV File,
+::
+
+    python3 -m fast_api_auth.app --mk-admin -u <username>
+
+Refer FAST API AUTH documentation for more.
+
+
+Install Master DHCP Auth Server
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+master-dhcp-auth is the backend authentication server for master DHCP. This provides endpoints required for MasterDHCP user authentication. This also provides an interface for collecting auth-tokens required for FAST Authentication.
+
+Installation of Master DHCP consists of installing two servers.
+
+1. **Master DHCP Auth** - this is the backend authentication server written in Flask framework.
+2. **Master DHCP Frontend** - this is the frontend UI written in React JS.
+
+
+
+Clone git repository
+"""""""""""""""""""""""""
+
+::
+
+    cd <directory where you want the project>
+
+    git clone https://git.virtz.centurylink.net/bitbucket/scm/md/master-dhcp-frontend.git
+
+
+
+Create a virtual environment
+"""""""""""""""""""""""""""""
+
+Create virtual environment for fast verification. Python3 has built in support to create a virtual environment.
+
+::
+
+    cd master-dhcp-frontend/master-dhcp-auth/
+
+    python3 -m venv <name for venv>
+
+Install required modules
+"""""""""""""""""""""""""
+
+Before installing packages, activate the virtual environment created.
+
+::
+
+    source <name for venv>/bin/activate
+
+    --OR--
+
+    .  <name of venv>/bin/activate
+
+Now install required modules inside the virtual environment. Requirements file requirements.txt can be found at root folder of project. Run the following command to install all required packages.
+
+::
+
+    pip3 install -r requirements.txt
+
+To see the installed packages in your virtual environment, run
+
+::
+
+   pip freeze
+
+
+Configurations
+""""""""""""""""
+
+This configuration file is present at ./expertdhcpauth/expertdhcpauth/config.ini
+
+::
+
+    [MONGODB]
+    USE_REPLICA_SET - Boolean to decide whether should use replica set or not.
+    MONGODB_HOST - MongoDB connection URI.
+    Example URI:
+        standalone: mongodb://mongodb0.example.com:27017
+        replicaset:
+   mongodb://mongodb0.example.com:27017,mongodb1.example.com:27017,mongodb2.example.com:27017/
+    MONGODB_USERNAME - Username to connect mongodb.
+    MONGODB_PASSWORD - Password required to connect mongodb.
+    MONGODB_RS - Replicaset name
+    MONGODB_DB_NAME - Database which FASTDHCP is using.
+    MONGODB_COLLECTION - Collection name which FASTDHCP is using.
+    [AUTH]
+    SECRET_KEY - Secret key to be used for encoding tokens.
+    APP_ID - Uuid of Master DHCP. This id should be present in user's appPermissions.
+
+Running the Server
+"""""""""""""""""""""""""
+
+Using python interpreter
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Activate virtual environment.
+
+::
+
+    source <name for venv>/bin/activate
+
+Run the following command from root directory to start the server.
+
+::
+
+    python run.py
+
+Using gunicorn
+^^^^^^^^^^^^^^^^
+
+Install gunicorn using pip
+*****************************
+
+Activate virtual environment
+
+::
+
+    source <name for venv>/bin/activate
+
+
+Install Gunicorn.
+
+::
+
+    pip3 install gunicorn==19.9.0
+
+
+Run using gunicorn via command line
+************************************
+
+::
+
+/home/ajeeb/master-dhcp-auth/venv/bin/gunicorn --bind 0.0.0.0:8086 --pid /home/ajeeb/master-dhcp-auth/run/expertdhcpauth.pid --error-logfile "/home/ajeeb/gunicorn/work/expertdhcpauth/log/error.log" --access-logfile "/home/ajeeb/gunicorn/work/expertdhcpauth/log/access.log" --workers=4 --threads=2 run:expertdhcpauth_app
+
+
+Running as a supervisord service with gunicorn thread
+********************************************************
+
+Copy fastlibvirt.ini to the path as below
+
+::
+
+    cp ./deploy/supervisord/expertdhcpauth.ini /etc/supervisord.d/expertdhcpauth.ini
+
+Make the fastlibvirt_start script executable.
+
+::
+
+    chmod +x ./deploy/supervisord/expertdhcpauth_start
+
+since we made changes to the configs, update supervisord configs.
+
+::
+
+    sudo  supervisorctl update
+
+start the supervisor daemon.
+
+::
+
+    sudo  supervisorctl reload
+
+check status of service.
+
+::
+
+    sudo  supervisorctl status
+
+
+Install Master DHCP Frontend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Clone git repository
+"""""""""""""""""""""""""
+
+Clone the repository.
+
+::
+
+    cd <directory where you want the project>
+
+    git clone https://git.virtz.centurylink.net/bitbucket/scm/md/master-dhcp-frontend.git
+
+
+
+Install requirements
+""""""""""""""""""""""
+
+Go to the directory where package.json is present.
+
+::
+
+    cd master-dhcp-frontend/master-dhcp-frontend
+
+
+::
+
+    npm install
+
+Prepare Local IEEE MAC Vendor database
+"""""""""""""""""""""""""""""""""""""""""
+
+Download the following MAC Assignments CSV files from this page. https://standards.ieee.org/products-services/regauth/index.html
+
+1. *Download latest IEEE MA-L Assignments (.csv) from this site and paste it inside master-dhcp-frontend/src/registry/ieeemal.csv*
+2. *Download latest IEEE MA-M Assignments (.csv) from this site and paste it inside master-dhcp-frontend/src/registry/ieeemam.csv*
+3. *Download latest IEEE MA-S Assignments (.csv) from this site and paste it inside master-dhcp-frontend/src/registry/ieeemas.csv*
+
+
+Configurations
+"""""""""""""""""
+
+This configuration files are present at *master-dhcp-frontend/public/conf*
+
+
+config.json
+^^^^^^^^^^^^
+
+Define the configurations in the *config.json* file. Required fields are described below.
+
+*authServerUrl*: master-dhcp-auth server url
+
+*useCsvAuthForMaster*: use users.csv for master authentication. In this case, the same user should be present for fast authentication as well. Also, authServerUrl is still required to specify because it is used as an interface for getting auth-tokens and server's status check.
+
+*defaults*: { "lab": , "server": "Server Id" } - if not specified, first lab and first server will be taken as default. labs: Specify labs and server details as shown below
+
+::
+
+    [{
+      "id": "LAB001",
+      "location": "Denver",
+      "value": "lab1",
+      "servers": [
+        {
+          "id": "KEA001",
+          "title": "multiserver1631",
+          "ip": "172.28.12.132",
+          "dhcpManagerPort": "5007",
+          "dhcpMonitorPort": "5555"
+        },
+        {
+          "id": "KEA002",
+          "title": "virtz-kea-dhcp01",
+          "ip": "10.189.134.56",
+          "dhcpManagerPort": "5007",
+          "dhcpMonitorPort": "5555"
+        }
+        ]
+        },
+        {
+      "id": "LAB002",
+      "location": "Bangalore",
+      "value": "lab2",
+      "servers": [
+        {
+          "id": "DUMMY001",
+          "title": "Dummy",
+          "ip": "10.189.11.11",
+          "dhcpManagerPort": "5007",
+          "dhcpMonitorPort": "5555"
+        },
+        {
+          "id": "DUMMY002",
+          "title": "Dummy",
+          "ip": "10.189.11.12",
+          "dhcpManagerPort": "5007",
+          "dhcpMonitorPort": "5555"
+        }
+      ]
+    }]
+
+apikeys.json
+^^^^^^^^^^^^^^
+
+Configure apikeys.json with the api keys for servers if available. Master DHCP will look for api keys before requesting auth-token from appropriate server. Each server can have two keys based on the access levels. Admin key need to be present in the 'admin' and non-admin key need to be placed in the 'user'. Sample API Key file will look like,
+
+::
+
+    {
+        "172.1.11.111": {
+        "admin": "eyJ0eXAiOiJKV1Q9.eyJ1c2IjoxNjQ1NjdY0fQ.RlWug4NSy9Hdmis1A",
+        "user": "eyJ0eXAiOiJKV1Q9.eyJ1c2VHAiOjE2MDIdODZ9.mOYvtqYD9HnPzVV8o"
+        }
+        "172.2.22.222": {
+            "admin": "eyJ0eXAiOiJKI19.eyJ1c2VybhkkkkdY0fQ.RlWug4NSlyGn9Hdmis1A",
+            "user": "eyJ0eXAiOiJKLiJ9.eyJ1cAiONDU2OfddDZ9.mOYvt1qYD9HnPfdzVV8o"
+        }
+    }
+
+users.csv
+^^^^^^^^^^^
+
+if useCsvAuthForMaster is true, users.csv need to be configured. The csv file contains three fields username, password and isAdmin.
+
+::
+
+    user,password,isadmin
+    user1, pw1, 1
+    user2, pw2, 0
+
+
+Running the server
+""""""""""""""""""""
+
+Running development server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Run the following command to start development server.
+
+::
+
+   npm start
+
+
+Running production server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Create build file
+******************
+
+This will create an optimized build folder in the same directory
+
+::
+
+    cd master-dhcp-frontend/master-dhcp-frontend/
+    npm run build
+
+
+Run as Supervisord
+********************
+
+Copy the ini file to supervisord folder
+
+::
+
+    sudo cp ./deploy/supervisord/expertdhcpui.ini /etc/supervisord.d/
+
+Since we made changes to the configs, update supervisord configs.
+
+::
+
+    sudo  supervisorctl update
+
+Restart the supervisor daemon.
+
+::
+
+    sudo  supervisorctl reload
+
+Check status of service.
+
+::
+
+    sudo  supervisorctl status expertdhcpui
+
+
+To check status of all services
+
+::
+
+    sudo  supervisorctl status
+
+
+Master DHCP Auth Endpoints
+----------------------------
+
+MASTERDHCPAUTH is the backend authentication server for expertdhcp frontend.
+
+
+001 Get User Session
+~~~~~~~~~~~~~~~~~~~~~~~
+
+API Information
+"""""""""""""""""""
+
+    +---------------------------------+----------------------------------------------------+
+    | **Function**                    | endpoints.get_user()                               |
+    +---------------------------------+----------------------------------------------------+
+    | **Description**                 | Get session details from session token.            |
+    +---------------------------------+----------------------------------------------------+
+    | **HTTP Method**                 | POST                                               |
+    +---------------------------------+----------------------------------------------------+
+    | **HTTP Application Type**       | application/json                                   |
+    +---------------------------------+----------------------------------------------------+
+    | **Call**                        | /auth/getuser                                      |
+    +---------------------------------+----------------------------------------------------+
+    | **Input Type**                  | JSON                                               |
+    +---------------------------------+----------------------------------------------------+
+    | **Output Type**                 | JSON                                               |
+    +---------------------------------+----------------------------------------------------+
+
+Request Parameters
+"""""""""""""""""""""""""
+
+    +------------------+----------------+----------------------------------+----------------------------------------------+
+    | **Parameters**   | **Data Type**  | **Description**                  | **Example**                                  |
+    +------------------+----------------+----------------------------------+----------------------------------------------+
+    | sessionToken     | string         | Master DHCP Session Token        | eyJ0eI1NiJ9.etaW4iLCJpc0FkNDZ9.z7TiX8RwEmfK  |
+    +------------------+----------------+----------------------------------+----------------------------------------------+
+
+Response Parameters:
+"""""""""""""""""""""""""
+
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | **Parameters**     | **Data Type**    | **Description**                                | **Example**                        |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | status             | string           | can be KO or OK                                | "OK"                               |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | statusCode         | string           | status code for each error or success          | "9020031000"                       |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | statusValue        | string           | status description corresponding to the code   | "Command execution successful"     |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | data               | JSON             | response data result                           | {}                                 |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+
+Sample Request URL
+"""""""""""""""""""""""""
+
+    ``http://10.189.126.14:8086/auth/getuser``
+
+Sample Request Object
+"""""""""""""""""""""""""
+
+    Sample request object is::
+
+        {
+			"sessionToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJI9.
+							 WluIjp0cnVlLCJleHAiOjE1OTkxOT.
+							 z7TiXh7TNawUcX13g610EtYDQNDJd"
+        }
+
+Sample Response Object
+"""""""""""""""""""""""""
+
+    This is a successful API response. Values may change::
+
+      {
+			"status": "OK",
+			"statusCode": "9020011000",
+			"statusValue": "Command execution successful",
+			"data": {
+				"status": "Get user Successful",
+				"data": {
+					"username": "admin",
+					"isAdmin": true,
+					"sessionToken": "eyJ0eXAiOiJKV1QiLCJhbGciO.
+					WluIjp0cnVlLCJleHAiOjE1OTk.
+					z7TiXh7TNawUcX13g610EtYDQN"
+				}
+			}
+      }
+
+
+Error Codes
+"""""""""""""""""""""""""
+
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | **Error Description**          | **Status**  | **Status Code**  | **Status Value**                                         | **Data**                       |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Unknown Exception              | KO          | 9020014000       | An exception occured in the server. Command unsuccessful | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Incorrect JSON                 | KO          | 9020014001       | No JSON input data provided                              | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Missing Keys                   | KO          | 9020014002       | Could not find JSON key                                  | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Database connection failed     | KO          | 9020014003       | Unable to connect database                               | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Database operation failed      | KO          | 9020014004       | Could not perform database operation                     | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Invalid credentials            | KO          | 9000014005       | Invalid credentials                                      | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Expired or Invalid token       | KO          | 9000014006       | Token Expired                                            | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+
+
+002 Authenticate user
+~~~~~~~~~~~~~~~~~~~~~~~
+
+API Information
+"""""""""""""""""""""""""
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Function**                    | endpoints.authenticate()                                           |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Description**                 | Authenticate expertdhcp using username and password                |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **HTTP Method**                 | POST                                                               |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **HTTP Application Type**       | application/json                                                   |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Call**                        | /auth/auth                                                         |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Input Type**                  | JSON                                                               |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Output Type**                 | JSON                                                               |
+    +---------------------------------+--------------------------------------------------------------------+
+
+Request Parameters
+"""""""""""""""""""""""""
+
+    +------------------+----------------+----------------------------------+------------------+
+    | **Parameters**   | **Data Type**  | **Description**                  | **Example**      |
+    +------------------+----------------+----------------------------------+------------------+
+    | username         | string         | Master DHCP username             | admin            |
+    +------------------+----------------+----------------------------------+------------------+
+    | password         | string         | password                         | 1234abcd         |
+    +------------------+----------------+----------------------------------+------------------+
+
+
+Response Parameters:
+"""""""""""""""""""""""""
+
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | **Parameters**     | **Data Type**    | **Description**                                | **Example**                        |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | status             | string           | can be KO or OK                                | "OK"                               |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | statusCode         | string           | status code for each error or success          | "9020031000"                       |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | statusValue        | string           | status description corresponding to the code   | "Command execution successful"     |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | data               | JSON             | response data result                           | {}                                 |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+
+Sample Request URL
+"""""""""""""""""""""""""
+
+    ``http://10.189.126.14:8086/auth/auth``
+
+Sample Request Object
+"""""""""""""""""""""""""
+
+    Sample request object is::
+
+		{
+			"username": "admin",
+			"password": "admin"
+		}
+
+Sample Response Object
+"""""""""""""""""""""""""
+
+    This is a successful API response. Values may change::
+
+		{
+			"status": "OK",
+			"statusCode": "9020031000",
+			"statusValue": "Command execution successful",
+			"data": {
+				"status": "Login Successful",
+				"username": "admin",
+				"isAdmin": true,
+				"sessionToken": "eyJ0eXAiOiJKV1QiLCJIUzI1NiJ9.
+					eyJ1c2VyIjoiYWRtaW4iLCJpc0FkbWzQ0OTN9.
+					H3RPFXB3valIKXentgng"
+			}
+		}
+
+
+Error Codes
+""""""""""""""""
+
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | **Error Description**          | **Status**  | **Status Code**  | **Status Value**                                         | **Data**                       |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Unknown Exception              | KO          | 9020024000       | An exception occured in the server. Command unsuccessful | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Incorrect JSON                 | KO          | 9020024001       | No JSON input data provided                              | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Missing Keys                   | KO          | 9020024002       | Could not find JSON key                                  | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Database connection failed     | KO          | 9020024003       | Unable to connect database                               | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Database operation failed      | KO          | 9020024004       | Could not perform database operation                     | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Invalid credentials            | KO          | 9000024005       | Invalid credentials                                      | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+
+003 Get Auth Tokens
+~~~~~~~~~~~~~~~~~~~~~~~
+
+API Information
+""""""""""""""""""""
+
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Function**                    | endpoints.get_auth_tokens()                                        |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Description**                 | Get FAST auth token for a list of servers                          |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **HTTP Method**                 | POST                                                               |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **HTTP Application Type**       | application/json                                                   |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Call**                        | /auth/get_auth_tokens                                              |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Input Type**                  | JSON                                                               |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Output Type**                 | JSON                                                               |
+    +---------------------------------+--------------------------------------------------------------------+
+
+Request Parameters
+""""""""""""""""""""""
+
+    +------------------+----------------+----------------------------------+------------------+
+    | **Parameters**   | **Data Type**  | **Description**                  | **Example**      |
+    +------------------+----------------+----------------------------------+------------------+
+    | username         | string         | Master DHCP username             | admin            |
+    +------------------+----------------+----------------------------------+------------------+
+    | password         | string         | Master DHCP password             | 1234abcd         |
+    +------------------+----------------+----------------------------------+------------------+
+    | servers          | string         | list of servers                  | admin            |
+    +------------------+----------------+----------------------------------+------------------+
+    | endpoint         | string         | fast endpoint for getting token  | /dhcp4/token     |
+    +------------------+----------------+----------------------------------+------------------+
+
+Response Parameters:
+"""""""""""""""""""""
+
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | **Parameters**     | **Data Type**    | **Description**                                | **Example**                        |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | status             | string           | can be KO or OK                                | "OK"                               |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | statusCode         | string           | status code for each error or success          | "9020031000"                       |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | statusValue        | string           | status description corresponding to the code   | "Command execution successful"     |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | data               | JSON             | response data result                           | {}                                 |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+
+Sample Request URL
+"""""""""""""""""""""
+
+    ``http://10.189.126.14:8086/auth/get_auth_tokens``
+
+Sample Request Object
+"""""""""""""""""""""""
+
+    Sample request object is::
+
+		{
+			"username": "adminTEST",
+			"password": "admin",
+			"servers": [
+				{"id": "KEA001", "ip": "10.189.134.56", "port": "5007"},
+				{"id": "KEA002", "ip": "172.28.12.132", "port": "5007"},
+				{"id": "KEA003", "ip": "172.28.11.13", "port": "5007"}
+			],
+			"endpoint": "/dhcp4/token"
+		}
+
+Sample Response Object
+"""""""""""""""""""""""
+
+    This is a successful API response. Values may change::
+
+		{
+			"status": "OK",
+			"statusCode": "9020041000",
+			"statusValue": "Command execution successful",
+			"data": {
+				"status": "Auth tokens collected",
+				"username": "adminTEST",
+				"authTokens": {
+					"KEA001": "eyJ0eXAiOiJKLCJhbGciOiJIUzI1NiJ9.
+							   eyJ1c2VyIjoiYWRtaW4iLCJpc0FkbWlu.
+							   z7TiXh7TNawUcX13g610EtYDQNDJ8UX8",
+					"KEA002": "eyJ0eXAiOiJKV1QiiJIUzI1NiJ9dsafd.
+							   eyJwZXJtaXNMjI4MTIxTEiLCJrrwedlo.
+							   bubaOZR3OfvSz_7GAQEgsdwqfsdaf232"
+				}
+			}
+		}
+
+
+Error Codes
+"""""""""""""
+
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | **Error Description**          | **Status**  | **Status Code**  | **Status Value**                                         | **Data**                       |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Unknown Exception              | KO          | 9020034000       | An exception occured in the server. Command unsuccessful | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Incorrect JSON                 | KO          | 9020034001       | No JSON input data provided                              | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Missing Keys                   | KO          | 9020034002       | Could not find JSON key                                  | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+
+004 Get Serever's Status
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+API Information
+""""""""""""""""""
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Function**                    | endpoints.check_servers_status()                                   |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Description**                 | Get session details from session token.                            |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **HTTP Method**                 | POST                                                               |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **HTTP Application Type**       | application/json                                                   |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Call**                        | /auth/servers_status                                               |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Input Type**                  | JSON                                                               |
+    +---------------------------------+--------------------------------------------------------------------+
+    | **Output Type**                 | JSON                                                               |
+    +---------------------------------+--------------------------------------------------------------------+
+
+Request Parameters
+"""""""""""""""""""""
+
+    +------------------+----------------+----------------------------------+----------------------------------------------+
+    | **Parameters**   | **Data Type**  | **Description**                  | **Example**                                  |
+    +------------------+----------------+----------------------------------+----------------------------------------------+
+    | sessionToken     | string         | Master DHCP Session Token        | eyJ0eI1NiJ9.etaW4iLCJpc0FkNDZ9.z7TiX8RwEmfK  |
+    +------------------+----------------+----------------------------------+----------------------------------------------+
+
+Response Parameters:
+""""""""""""""""""""""
+
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | **Parameters**     | **Data Type**    | **Description**                                | **Example**                        |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | status             | string           | can be KO or OK                                | "OK"                               |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | statusCode         | string           | status code for each error or success          | "9020031000"                       |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | statusValue        | string           | status description corresponding to the code   | "Command execution successful"     |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+    | data               | JSON             | response data result                           | {}                                 |
+    +--------------------+------------------+------------------------------------------------+------------------------------------+
+
+Sample Request URL
+"""""""""""""""""""""
+
+    ``http://10.189.126.14:8086/auth/servers_status``
+
+Sample Request Object
+"""""""""""""""""""""""
+
+    Sample request object is::
+
+		{
+			"servers": [
+				{"id": "KEA001", "ip": "10.189.134.56", "port": "5007"},
+				{"id": "KEA002", "ip": "172.28.12.132", "port": "5007"},
+				{"id": "KEA003", "ip": "172.28.11.13", "port": "5007"}
+			]
+		}
+
+Sample Response Object
+"""""""""""""""""""""""
+
+    This is a successful API response. Values may change::
+
+		{
+			"status": "OK",
+			"statusCode": "9020051000",
+			"statusValue": "Command execution successful",
+			"data": {
+				"status": "Server status checks successful",
+				"serversStatus": {
+					"10.189.134.56": true,
+					"172.28.12.132": true,
+					"172.28.11.13": false
+				}
+			}
+		}
+
+Error Codes
+"""""""""""""""
+
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | **Error Description**          | **Status**  | **Status Code**  | **Status Value**                                         | **Data**                       |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Unknown Exception              | KO          | 9020044000       | An exception occured in the server. Command unsuccessful | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Incorrect JSON                 | KO          | 9020044001       | No JSON input data provided                              | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+    | Missing Keys                   | KO          | 9020044002       | Could not find JSON key                                  | {"status": <error message> }   |
+    +--------------------------------+-------------+------------------+----------------------------------------------------------+--------------------------------+
+
+
+Master DHCP GUI User Guide
+---------------------------
+
+Change lab and server
+~~~~~~~~~~~~~~~~~~~~~~
+
+Step 1: Click on the server IP button on top-right of the page.
+
+.. image:: images/change_server_btn.png
+  :width: 200
+
+
+
+Step 2: Choose appropriate Lab
+
+.. image:: images/choose_server_page.png
+  :width: 600
+
+
+Step 3: Click on the select button for required server.
+
+
+Subnets
+~~~~~~~~~
+
+View subnet
+""""""""""""""
+
+Step 1: Choose the subnet ID from the drop down list.
+
+.. image:: images/subnet_view_001.png
+  :width: 200
+
+Step 2: To view option-data/pools/reservations;
+
+a. Click on the respective buttons,
+
+.. image:: images/subnet_view_002.png
+  :width: 300
+
+b. Choose the required item,
+
+.. image:: images/subnet_view_003.png
+  :width: 300
+
+c. Selected item will get displayed on the right side.
+
+.. image:: images/subnet_view_004.png
+  :width: 600
+
+Step 3: To view relay item, click on the eye button. Item will be displayed at right column.
+
+.. image:: images/subnet_view_005.png
+  :width: 400
+
+Add subnet
+""""""""""""""
+
+Step 1: Click on the *Add Subnet* button.
+
+.. image:: images/subnet_add_001.png
+  :width: 600
+
+Step 2: Fill the required details.
+
+.. image:: images/subnet_add_002a.png
+  :width: 600
+
+.. image:: images/subnet_add_002b.png
+  :width: 600
+
+Step 3: Click on the update (tick) button before adding option-data/pools/reservations. This is important because the filled
+details will be lost if we edit next column without saving the first column.
+
+.. image:: images/tick.png
+  :width: 50
+  :height: 100
+
+
+Step 4: Add option-data/pools/reservations by clicking add (+) button next to the field.
+
+.. image:: images/plus.png
+  :width: 100
+  :height: 100
+
+In such cases, a + sign will be prepended to the table label which indicates this is a new data being added and not an
+existing one.
+
+.. image:: images/subnet_add_003.png
+  :width: 400
+
+After filling appropriate data, click on the update button to save.
+
+Step5: After filling the subnet details, click on the *update* button to see the subnet object we are going to add. This
+Button will appear when we start filling/editing the details.
+
+.. image:: images/update.png
+  :width: 200
+
+Clicking the *diff* button will display the difference between current object ({} in the case) and updated object.
+
+
+Step 6: Submit after verifying the subnet details.
+
+
+
+
+Modify subnet
+""""""""""""""
+
+Step 1: Choose the subnet from the dropdown list.
+
+.. image:: images/subnet_mod_001.png
+  :width: 600
+
+Step 2: Fill the required details.
+
+.. image:: images/subnet_mod_002a.png
+  :width: 600
+
+.. image:: images/subnet_mod_002b.png
+  :width: 600
+
+Step 3: Click on the update (tick) button before adding option-data/pools/reservations. This is important because the filled
+details will be lost if we edit next column without saving the first column.
+
+.. image:: images/tick.png
+  :width: 50
+  :height: 100
+
+
+Step 4: Add option-data/pools/reservations by clicking add (+) button next to the field.
+
+.. image:: images/plus.png
+  :width: 100
+  :height: 100
+
+In such cases, a + sign will be prepended to the table label which indicates this is a new data being added and not an
+existing one.
+
+
+.. image:: images/subnet_add_003.png
+  :width: 400
+
+After filling appropriate data, click on the update button to save.
+
+Step5: After filling the subnet details, click on the *update* button to see the subnet object we are going to add. This
+Button will appear when we start filling/editing the details.
+
+.. image:: images/update.png
+  :width: 200
+
+Clicking the *diff* button will display the difference between current object and updated object.
+
+
+Step 6: Submit after verifying the subnet details.
+
+
+Delete subnet
+""""""""""""""
+
+Step 1: Choose the subnet from the dropdown list.
+
+.. image:: images/subnet_mod_001.png
+  :width: 600
+
+Step 2: Click the trash button on the top-right of table.
+
+Step 3: Confirm delete on the popup window.
+
+.. image:: images/subnet_del_001.png
+  :width: 600
+
+
+
+Leases
+~~~~~~~~~
+
+View leases
+""""""""""""""
+
+Step1: Click on the Leases tab and leases will be loaded and displayed.
+
+.. image:: images/leases_view_001.png
+  :width: 500
+
+
+Add lease
+"""""""""""
+
+Step 1: Click on the add lease button.
+
+.. image:: images/leases_add_001.png
+  :width: 150
+
+Step 2: Fill lease details.
+
+.. image:: images/leases_add_002a.png
+  :width: 500
+.. image:: images/leases_add_002b.png
+  :width: 500
+
+Step 3: After filling the subnet details, click on the *update* button to see the subnet object we are going to add. This
+Button will appear when we start filling/editing the details.
+
+.. image:: images/update.png
+  :width: 200
+
+Step 4: Verify the details and click submit
+
+.. image:: images/leases_add_003.png
+  :width: 500
+
+
+Modify lease
+""""""""""""""
+
+Step 1: Click the edit button at the right most column of the lease to modify.
+
+.. image:: images/leases_mod_001.png
+  :width: 500
+
+Step 2: Click the edit button to enable the fields.
+
+Step 3: Fill lease details.
+
+.. image:: images/leases_add_002a.png
+  :width: 500
+.. image:: images/leases_add_002b.png
+  :width: 500
+
+Step 4: After filling the subnet details, click on the *update* button to see the subnet object we are going to add. This
+Button will appear when we start filling/editing the details.
+
+.. image:: images/update.png
+  :width: 200
+
+Step 5: Verify the details and click submit.
+
+.. image:: images/leases_add_003.png
+  :width: 500
+
+
+Delete lease
+""""""""""""""
+
+Step 1: Click the edit button at the right most column of the lease to modify.
+
+.. image:: images/leases_mod_001.png
+  :width: 500
+
+Step 2: Click the trash button to delete the lease.
+
+Step 3: Confirm delete on the pop up.
+
+.. image:: images/leases_del_001.png
+  :width: 500
+
+
+
+Wipe lease
+"""""""""""""
+
+Step 1: Click on the wipe button.
+
+.. image:: images/leases_add_001.png
+  :width: 150
+
+Step 2: Enter the subnet ID and click the wipe button to wipe all the leases associated with that subnet.
+
+.. image:: images/leases_wipe_001.png
+  :width: 400
+
+Client Classes
+~~~~~~~~~~~~~~~
+
+View client classes
+""""""""""""""""""""
+
+Step 1: Choose the client class to display.
+
+.. image:: images/cc_view_001.png
+  :width: 400
+
+.. image:: images/cc_view_002.png
+  :width: 400
+
+
+Add client classes
+""""""""""""""""""""
+
+Step 1: Click on the "Add Client Class" button.
+
+.. image:: images/cc_add_001.png
+  :width: 500
+
+Step 2: Fill the client class details.
+
+.. image:: images/cc_add_002.png
+  :width: 500
+
+Step 3: After filling the subnet details, click on the *update* button to see the subnet object we are going to add. This
+Button will appear when we start filling/editing the details.
+
+.. image:: images/update.png
+  :width: 200
+
+Step 5: Verify the details and click submit.
+
+.. image:: images/cc_add_003.png
+  :width: 500
+
+
+Modify client classes
+""""""""""""""""""""""
+
+Step 1: Choose the client class to modify.
+
+.. image:: images/cc_view_001.png
+  :width: 400
+
+Step 2: Fill the client class details.
+
+.. image:: images/cc_add_002.png
+  :width: 500
+
+Step 3: After filling the subnet details, click on the *update* button to see the subnet object we are going to add. This
+Button will appear when we start filling/editing the details.
+
+.. image:: images/update.png
+  :width: 200
+
+Step 5: Verify the details and click submit.
+
+.. image:: images/cc_add_003.png
+  :width: 500
+
+Delete client classes
+""""""""""""""""""""""
+
+Step 1: Choose the client class to delete.
+
+.. image:: images/cc_del_001.png
+  :width: 400
+
+Step 2: Click the trash button on the top right of table.
+
+Step 3: Confirm delete on the pop up.
+
+.. image:: images/cc_del_002.png
+  :width: 500
+
+
+DHCP Dump
+~~~~~~~~~~~~~~~
+
+Trigger Packet Collection
+""""""""""""""""""""""""""
+
+Step 1: Click on the trigger button to start packet collection.
+
+.. image:: images/dd_trigger_001.png
+  :width: 500
+
+This will reset the count and start collecting from 0.
+
+.. image:: images/dd_trigger_002.png
+  :width: 500
+
+
+Get Packets
+""""""""""""
+
+Step 1: User can specify the starting position and count of packets.
+
+.. image:: images/dd_getrows_001.png
+  :width: 500
+
+
+Step 2: Click get rows to view the packets.
+
+.. image:: images/dd_getrows_002.png
+  :width: 500
+
+Step 3: Click on the rows to expand the logs.
+
+.. image:: images/dd_getrows_003.png
+  :width: 500
+
+
+Stop Packet Collection
+""""""""""""""""""""""""""
+
+Step 1: Click on the stop button to stop packet collection.
+
+.. image:: images/dd_trigger_001.png
+  :width: 500
+
+
+RAW API
+~~~~~~~~~~~
+
+RAW API facilitates firing of all the FAST DHCP api endpoints as raw. Following are the APIs available,
+
+      1. Get Kea config",
+      2. Get IP from MAC Address
+      3. Add Subnet
+      4. Modify Subnet
+      5. Delete Subnet
+      6. Add Subnet Option
+      7. Delete Subnet Option
+      8. Add Reservation
+      9. Delete Reservation
+      10. Add Option Reservation
+      11. Delete Option Reservation
+      12. Get Leases
+      13. Add Lease
+      14. Delete Lease
+      15. Modify Lease
+      16. Wipe Leases
+      17. Add Client Class
+      18. Modify Client Class
+      19. Delete Client Class
+
+
+GET Calls
+""""""""""
+
+Step 1: Choose the API from drop down list.
+
+.. image:: images/raw_get_001.png
+  :width: 500
+
+Step 2: Click the GET Button and wait..
+
+.. image:: images/raw_get_002.png
+  :width: 500
+
+Step 3: Uncheck the collapsed tag to expand the result.
+
+.. image:: images/raw_get_003.png
+  :width: 500
+
+Step 3: Check the 'data type'/ 'object size'/ 'clip board' to see the metadata of response.
+
+.. image:: images/raw_get_004.png
+  :width: 500
+
+
+POST Calls
+""""""""""
+
+Step 1: Choose the API from drop down list.
+
+.. image:: images/raw_get_001.png
+  :width: 500
+
+Step 2: Enter the input , click the POST Button and wait..
+
+.. image:: images/raw_post_001.png
+  :width: 500
+
+Step 3: Uncheck the collapsed tag to expand the result.
+
+.. image:: images/raw_post_002.png
+  :width: 500
+
+Step 3: Check the 'data type'/ 'object size'/ 'clip board' to see the metadata of response.
+
+.. image:: images/raw_post_003.png
+  :width: 500
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
